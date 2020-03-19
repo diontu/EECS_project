@@ -17,7 +17,7 @@ feature -- command
     	do
 			-- perform some update on the model state
 			wormhole_action := create {WORMHOLE_ACTION}.make
-			model.default_update
+--			model.default_update
 			etf_cmd_container.on_change.notify ([Current])
     	end
 

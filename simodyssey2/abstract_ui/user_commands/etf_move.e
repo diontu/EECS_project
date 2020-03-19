@@ -20,7 +20,7 @@ feature -- command
 			-- perform some update on the model state
 --			move_action := create {MOVE_ACTION}.make ("move", [1,1])
 
-			model.default_update
+--			model.default_update
 			etf_cmd_container.on_change.notify ([Current])
     	end
 

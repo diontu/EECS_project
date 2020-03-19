@@ -39,8 +39,6 @@
 		<library name="vision2" location="$ISE_LIBRARY\library\vision2\vision2.ecf"/>
 		<cluster name="generated_code" location=".\generated_code\" recursive="true"/>
 		<cluster name="root" location=".\root\" recursive="true"/>
-		<cluster name="simodyssey2" location=".\simodyssey2\" recursive="true">
-			<cluster name="new_cluster_1" location="ACTIONS\"/>
-		</cluster>
+		<cluster name="simodyssey2" location=".\simodyssey2\" recursive="true"/>
 	</target>
 </system>
