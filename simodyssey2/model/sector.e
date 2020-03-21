@@ -97,7 +97,7 @@ feature -- commands
 					--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 					-------------------- ADDED start --------------------
-					if attached {PLANET} entity.entity as planet_entity then
+					if attached {PLANET_ENT} entity.entity as planet_entity then
 						planet_entity.set_turns(turn)
 					end
 					-------------------- ADDED end --------------------

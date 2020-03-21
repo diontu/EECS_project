@@ -1,11 +1,11 @@
 note
-	description: "Summary description for {WORMHOLE}."
+	description: "Summary description for {BLACKHOLE_ENT}."
 	author: ""
 	date: "$Date$"
 	revision: "$Revision$"
 
 class
-	WORMHOLE
+	BLACKHOLE_ENT
 
 inherit
 	ENTITY
@@ -19,13 +19,13 @@ feature {NONE} -- Constructor
 			position := [0,0]
 		end
 
-feature -- commands
+feature
+	position: TUPLE[INTEGER,INTEGER]
+
+feature
 	add_pos(pos: TUPLE[INTEGER, INTEGER])
 		do
 			position := pos
 		end
-
-feature
-	position: TUPLE[INTEGER,INTEGER]
 
 end

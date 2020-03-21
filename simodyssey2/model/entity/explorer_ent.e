@@ -1,11 +1,11 @@
 note
-	description: "Summary description for {EXPLORER}."
+	description: "Summary description for {EXPLORER_ENT}."
 	author: ""
 	date: "$Date$"
 	revision: "$Revision$"
 
 class
-	EXPLORER
+	EXPLORER_ENT
 
 inherit
 	ENTITY

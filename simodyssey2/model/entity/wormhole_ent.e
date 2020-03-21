@@ -1,14 +1,14 @@
 note
-	description: "Summary description for {BLUE_GIANT}."
+	description: "Summary description for {WORMHOLE_ENT}."
 	author: ""
 	date: "$Date$"
 	revision: "$Revision$"
 
 class
-	BLUE_GIANT
+	WORMHOLE_ENT
 
 inherit
-	STAR
+	ENTITY
 
 create
 	make
@@ -19,18 +19,13 @@ feature {NONE} -- Constructor
 			position := [0,0]
 		end
 
-feature -- commdans
+feature -- commands
 	add_pos(pos: TUPLE[INTEGER, INTEGER])
 		do
 			position := pos
 		end
 
-feature -- attribute
-	luminosity: INTEGER
-		do
-			Result := 5
-		end
-
+feature
 	position: TUPLE[INTEGER,INTEGER]
 
 end

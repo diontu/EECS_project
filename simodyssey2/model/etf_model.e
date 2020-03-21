@@ -28,6 +28,9 @@ feature {NONE} -- Initialization
 			create descriptions_msg.make_empty
 			create deaths_msg.make_empty
 
+			-- player command classes
+			
+
 			-- variables used for msgs
 			entities_moved := false
 			entities_died := false
@@ -43,6 +46,18 @@ feature {NONE} -- Initialization
 
 		end
 
+feature -- player commands classes
+--	abort_command: ABORT
+--	land_command: LAND
+--	liftoff_command: LIFTOFF
+--	move_command: MOVE
+--	pass_command: PASS
+--	play_command: PLAY
+--	status_command: STATUS
+--	test_command: TEST
+--	wormhole_command: WORMHOLE
+
+
 feature -- model attributes
 	-- variables used for msgs
 	entities_moved: BOOLEAN
@@ -57,15 +72,90 @@ feature -- model attributes
 	-- game properties
 --	galaxy: GALAXY
 
-feature -- states
+feature -- update states
+		-- Could use: (outside of class)
+		-- 1. update_state
+		-- 2. update_mini_state
+		-- 3. ok_state
+		-- 4. error_state
+		-- 5. play_mode -- (when player enters play)
+		-- 6. test_mode -- (when player enters test)
+
+	update_state
+		do
+			state := state + 1
+			mini_state := 0
+		end
+
+	update_mini_state
+		do
+			mini_state := mini_state + 1
+		end
+
+	ok_state
+		do
+			ok_or_error := "ok"
+		end
+
+	error_state
+		do
+			ok_or_error := "error"
+		end
+
+	play_mode
+		do
+			mode := "play"
+		end
+
+	test_mode
+		do
+			mode := "test"
+		end
+
+
+feature -- update variables used for output
+		-- Could use: (outside of class)
+		-- 1. an_entity_moved
+		-- 2. an_entity_died
+
+	an_entity_moved
+		do
+			entities_moved := true
+		end
+
+	an_entity_died
+		do
+			entities_died := true
+		end
+
+
+feature -- states -- MUST MANUALLY UPDATE THE STATE AND MINI_STATE
+		-- Could use: (outside of class)
+		-- 1. new_turn_state
+		-- 2. new_game_state
+
 	-- cannot remove reset
 	reset
 		do
 			make
 		end
 
+	new_turn_state
+			-- Reset turn state
+		do
+			-- states
+			ok_or_error := "ok"
+
+			-- variables used for output
+			entities_moved := false
+			entities_died := false
+
+			-- clear output and msgs
+			clear_output_and_msgs
+		end
+
 	new_game_state
-			-- Reset model state.
+			-- Reset game state.
 		do
 			-- states
 			-- state and mini_state are manually adjusted wrt player commands
@@ -75,6 +165,9 @@ feature -- states
 			-- variables used for outputs
 			entities_moved := false
 			entities_died := false
+
+			-- clear output and msgs
+			clear_output_and_msgs
 		end
 
 	test
@@ -110,6 +203,44 @@ feature -- states_msg, movements_msg, sectors_msg, descriptions_msg, deaths_msg,
 	sectors_msg: STRING
 	descriptions_msg: STRING
 	deaths_msg: STRING
+
+feature -- clear msgs and output variable
+	clear_output_and_msgs
+		do
+			create output.make_empty
+			create movements_msg.make_empty
+			create states_msg.make_empty
+			create sectors_msg.make_empty
+			create descriptions_msg.make_empty
+			create deaths_msg.make_empty
+		end
+
+
+feature -- append commands
+	states_msg_append (s: STRING)
+		do
+			states_msg.append (s)
+		end
+
+	movements_msg_append (s: STRING)
+		do
+			movements_msg.append (s)
+		end
+
+	sectors_msg_append (s: STRING)
+		do
+			sectors_msg.append (s)
+		end
+
+	descriptions_msg_append (s: STRING)
+		do
+			descriptions_msg.append (s)
+		end
+
+	deaths_msg_append (s: STRING)
+		do
+			deaths_msg.append (s)
+		end
 
 feature -- output_states, output_movements, output_sectors, output_descriptions, output_deaths, output_galaxy
 		-- states_msg, movements_msg, sectors_msg, descriptions_msg, deaths_msg, (galaxy_msg not needed)

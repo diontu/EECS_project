@@ -1,11 +1,11 @@
 note
-	description: "Summary description for {STAR}."
+	description: "Summary description for {STAR_ENT}."
 	author: ""
 	date: "$Date$"
 	revision: "$Revision$"
 
 deferred class
-	STAR
+	STAR_ENT
 
 inherit
 	ENTITY

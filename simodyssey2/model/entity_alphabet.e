@@ -30,29 +30,29 @@ feature -- Constructor
         	-------------------- ADDED start --------------------
             if item.is_equal ('E') then
             	id := 0
-            	entity := (create {EXPLORER}.make)
+            	entity := (create {EXPLORER_ENT}.make)
             elseif item.is_equal ('P') then
             	id := shared_info.planet_id
             	shared_info.increment_planet_id
-            	entity := (create {PLANET}.make)
+            	entity := (create {PLANET_ENT}.make)
             elseif item.is_equal ('O') then
             	id := -1
-            	entity := (create {BLACKHOLE}.make)
+            	entity := (create {BLACKHOLE_ENT}.make)
             elseif item.is_equal ('Y') then
             	id := shared_info.stationary_id
             	shared_info.decrement_stationary_id
-            	entity := (create {YELLOW_DWARF}.make)
+            	entity := (create {YELLOW_DWARF_ENT}.make)
             elseif item.is_equal ('*') then
             	id := shared_info.stationary_id
             	shared_info.decrement_stationary_id
-            	entity := (create {BLUE_GIANT}.make)
+            	entity := (create {BLUE_GIANT_ENT}.make)
             elseif item.is_equal ('W') then
             	id := shared_info.stationary_id
             	shared_info.decrement_stationary_id
-            	entity := (create {WORMHOLE}.make)
+            	entity := (create {WORMHOLE_ENT}.make)
             else -- will never occur
             	id := -100
-            	entity := (create {PLANET}.make)
+            	entity := (create {PLANET_ENT}.make)
             end
 
 			--position := [0,0] -- entity will never be in this position
@@ -82,27 +82,27 @@ feature -- commands
 		do
 			--position := pos
 			if item.is_equal ('E') then
-            	if attached {EXPLORER} entity as explorer then
+            	if attached {EXPLORER_ENT} entity as explorer then
             		explorer.add_pos(pos)
             	end
             elseif item.is_equal ('P') then
-            	if attached {PLANET} entity as planet then
+            	if attached {PLANET_ENT} entity as planet then
             		planet.add_pos(pos)
             	end
             elseif item.is_equal ('O') then
-            	if attached {BLACKHOLE} entity as blackhole then
+            	if attached {BLACKHOLE_ENT} entity as blackhole then
             		blackhole.add_pos(pos)
             	end
             elseif item.is_equal ('Y') then
-            	if attached {YELLOW_DWARF} entity as yellow_dwarf then
+            	if attached {YELLOW_DWARF_ENT} entity as yellow_dwarf then
             		yellow_dwarf.add_pos(pos)
             	end
             elseif item.is_equal ('*') then
-            	if attached {BLUE_GIANT} entity as blue_giant then
+            	if attached {BLUE_GIANT_ENT} entity as blue_giant then
             		blue_giant.add_pos(pos)
             	end
             elseif item.is_equal ('W') then
-            	if attached {WORMHOLE} entity as wormhole then
+            	if attached {WORMHOLE_ENT} entity as wormhole then
             		wormhole.add_pos(pos)
             	end
             else -- will never occur
