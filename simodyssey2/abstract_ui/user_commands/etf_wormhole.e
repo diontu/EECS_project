@@ -12,12 +12,9 @@ create
 	make
 feature -- command
 	wormhole
-		local
-			wormhole_action: WORMHOLE_ACTION
     	do
 			-- perform some update on the model state
-			wormhole_action := create {WORMHOLE_ACTION}.make
---			model.default_update
+			model.turn (create {WORMHOLE_ACTION}.make)
 			etf_cmd_container.on_change.notify ([Current])
     	end
 

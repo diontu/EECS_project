@@ -34,6 +34,7 @@ feature -- commands
 			is_dead := false
 			is_landed := false
 			position := default_pos
+			used_wormhole := false
 		end
 
 	increment_fuel_by(amount: INTEGER)
@@ -98,6 +99,13 @@ feature -- commands
 			valid_life: life >= 0
 		end
 
+	change_life (amount: INTEGER)
+		require
+			valid_amount: life >= 0 and life <= 3
+		do
+			life := amount
+		end
+
 	land
 		do
 			is_landed := true
@@ -129,14 +137,6 @@ feature -- commands
 			death_column := col
 		end
 
-feature -- explorer actions
-	------------------ TEST ADDED start --------------
-	lose_life
-		do
-			explorer_actions.lose_life
-		end
-	------------------ TEST ADDED end --------------
-
 
 feature -- attributes
 	life: INTEGER
@@ -154,25 +154,15 @@ feature -- attributes
 
 feature -- private attributes
 	max_life: INTEGER
---		attribute
---			Result := 3
---		end
+
 	max_fuel: INTEGER
---		attribute
---			Result := 3
---		end
+
 	default_pos: TUPLE[INTEGER,INTEGER]
 		attribute
 			Result := [1,1]
 		end
 
 	used_wormhole: BOOLEAN
-
-feature -- query
-	explorer_actions: EXPLORER_ACTIONS
-		do
-			create Result.make(current)
-		end
 
 invariant
 	valid_life: life >= 0 and life <= max_life

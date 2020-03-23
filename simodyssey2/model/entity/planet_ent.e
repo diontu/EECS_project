@@ -54,14 +54,6 @@ feature -- commands
 			position := pos
 		end
 
-feature -- planet actions
-
-feature -- private command
-	planet_actions: PLANET_ACTIONS
-		do
-			create Result.make(current)
-		end
-
 feature -- attributes
 	attached_to_star: BOOLEAN
 

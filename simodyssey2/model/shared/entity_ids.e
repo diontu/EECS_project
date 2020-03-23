@@ -88,7 +88,7 @@ feature -- commands
 			Result := temp
 		end
 
-	delete_entity(id: INTEGER) -- not working properly
+	delete_entity(id: INTEGER) -- check if working properly
 		local
 			temp: TUPLE[INTEGER, detachable ENTITY_ALPHABET]
 		do

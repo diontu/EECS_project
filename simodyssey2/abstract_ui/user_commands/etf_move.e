@@ -10,17 +10,17 @@ inherit
 	ETF_MOVE_INTERFACE
 create
 	make
+
 feature -- command
 	move(dir: INTEGER_32)
 		require else
 			move_precond(dir)
---		local
---			move_action: MOVE_ACTION
+		local
+			du: DIRECTION_UTILITY
     	do
 			-- perform some update on the model state
---			move_action := create {MOVE_ACTION}.make ("move", [1,1])
 
---			model.default_update
+			model.turn (create {MOVE_ACTION}.make (du.num_dir (dir)))
 			etf_cmd_container.on_change.notify ([Current])
     	end
 

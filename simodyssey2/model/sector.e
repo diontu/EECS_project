@@ -83,8 +83,24 @@ feature -- commands
 				threshold := gen.rchoose (1, 100) -- each iteration, generate a new value to compare against the threshold values provided by `test` or `play`
 
 
-				if threshold < shared_info.planet_threshold then
-					create component.make('P')
+				if threshold < shared_info.asteroid_threshold then
+					create component.make('A')
+				else
+					if threshold < shared_info.janitaur_threshold then
+						create component.make('J')
+					else
+						if (threshold < shared_info.malevolent_threshold) then
+							create component.make('M')
+						else
+							if (threshold < shared_info.benign_threshold) then
+								create component.make('B')
+							else
+								if threshold < shared_info.planet_threshold then
+									create component.make('P')
+								end
+							end
+						end
+					end
 				end
 
 
@@ -115,15 +131,10 @@ feature --command
 			-- put `new_component' in contents array
 		local
 			loop_counter: INTEGER
-			other_counter: INTEGER
 			found: BOOLEAN
 			does_exist_in_entities: BOOLEAN
 			emptY_space_found: BOOLEAN
 			temp_contents: ARRAYED_LIST [detachable ENTITY_ALPHABET]
-
-			next_available_spot: INTEGER
-			found_next: BOOLEAN
-
 
 		do
 			create temp_contents.make (shared_info.max_capacity)
@@ -141,23 +152,6 @@ feature --command
 			-- find next available spot
 
 			if not found then
---				from
---					other_counter := 1
---				until
---					other_counter >= contents.count
---				loop
---					if loop_counter = other_counter then
---						if attached temp_contents as temp then
---							temp_contents.extend (new_component)
---						end
---					else
---						if attached temp_contents as temp then
---							temp_contents.extend (contents[loop_counter])
---						end
---					end
---					other_counter := other_counter + 1
---				end
-
 				from
 					contents.start
 				until
@@ -199,32 +193,14 @@ feature --command
 						end
 					end
 				end
---				contents.extend (new_component)
---				if attached temp_contents as temp then
---					contents := temp_contents
---				end
---				new_component.add_pos (pos)
---				does_exist_in_entities := false
---				across entity_ids.entity_ids as tuple loop
---					if attached {INTEGER} tuple.item.at(1) as id then
---						if id = new_component.id then
---							does_exist_in_entities := true
---						end
---					end
---				end
---				if not does_exist_in_entities then
---					entity_ids.add (new_component.id, new_component)
---				end
 			end
 
---		ensure
---			component_put: not is_full implies contents.has (new_component)
+		ensure
+			component_put: not is_full implies contents.has (new_component)
 		end
 
 	delete(et: ENTITY_ALPHABET)
 		local
-			temp: ENTITY_ALPHABET
-			id: INTEGER
 			loop_counter: INTEGER
 			added: BOOLEAN
 		do
@@ -314,8 +290,8 @@ feature -- Queries
 				until
 					loop_counter > contents.count or Result
 				loop
-					if attached contents [loop_counter] as temp_item  then
-						Result := temp_item.is_wormhole
+					if attached {WORMHOLE_ENT} contents [loop_counter] as temp_item  then
+						Result := true
 					end -- if
 					loop_counter := loop_counter + 1
 				end
@@ -331,8 +307,8 @@ feature -- Queries
 				until
 					loop_counter > contents.count or Result
 				loop
-					if attached contents [loop_counter] as temp_item  then
-						Result := temp_item.is_bh
+					if attached {BLACKHOLE_ENT} contents [loop_counter] as temp_item  then
+						Result := true
 					end -- if
 					loop_counter := loop_counter + 1
 				end
@@ -348,8 +324,8 @@ feature -- Queries
 				until
 					loop_counter > contents.count or Result
 				loop
-					if attached contents [loop_counter] as temp_item  then
-						Result := temp_item.is_yd
+					if attached {YELLOW_DWARF_ENT} contents [loop_counter] as temp_item  then
+						Result := true
 					end -- if
 					loop_counter := loop_counter + 1
 				end
@@ -365,8 +341,8 @@ feature -- Queries
 				until
 					loop_counter > contents.count or Result
 				loop
-					if attached contents [loop_counter] as temp_item  then
-						Result := temp_item.is_pl
+					if attached {PLANET_ENT} contents [loop_counter] as temp_item  then
+						Result := true
 					end -- if
 					loop_counter := loop_counter + 1
 				end

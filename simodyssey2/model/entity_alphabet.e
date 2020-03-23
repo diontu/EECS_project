@@ -32,8 +32,8 @@ feature -- Constructor
             	id := 0
             	entity := (create {EXPLORER_ENT}.make)
             elseif item.is_equal ('P') then
-            	id := shared_info.planet_id
-            	shared_info.increment_planet_id
+            	id := shared_info.movable_id
+            	shared_info.increment_movable_id
             	entity := (create {PLANET_ENT}.make)
             elseif item.is_equal ('O') then
             	id := -1
@@ -133,5 +133,5 @@ feature -- Query
 
 invariant
     allowable_symbols:
-        item = 'E' or item = 'P' or item = 'O' or item = 'W' or item = 'Y' or item = '*'
+        item = 'E' or item = 'P' or item = 'A' or item = 'M' or  item = 'J' or item = 'O' or item = 'W' or item = 'Y' or item = '*' or item='B'
 end

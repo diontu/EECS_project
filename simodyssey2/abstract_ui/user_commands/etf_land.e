@@ -14,7 +14,7 @@ feature -- command
 	land
     	do
 			-- perform some update on the model state
---			model.default_update
+			model.turn(create {LAND_ACTION}.make)
 			etf_cmd_container.on_change.notify ([Current])
     	end
 

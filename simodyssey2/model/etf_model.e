@@ -29,7 +29,11 @@ feature {NONE} -- Initialization
 			create deaths_msg.make_empty
 
 			-- player command classes
-			
+			create abort_command.make
+			create play_command.make
+			create status_command.make
+			create test_command.make
+			create turn_commands.make
 
 			-- variables used for msgs
 			entities_moved := false
@@ -42,20 +46,22 @@ feature {NONE} -- Initialization
 			ok_or_error := "ok"
 
 			-- game properties
---			create galaxy.placeholder
+			create galaxy.placeholder
+			shared_info := shared_info_access.shared_info
 
+			-- initial state
+			states_msg_append ("%N")
+			states_msg_append ("  ")
+			states_msg_append ("Welcome! Try test(3,5,7,15,30)")
+			output_states
 		end
 
 feature -- player commands classes
---	abort_command: ABORT
---	land_command: LAND
---	liftoff_command: LIFTOFF
---	move_command: MOVE
---	pass_command: PASS
---	play_command: PLAY
---	status_command: STATUS
---	test_command: TEST
---	wormhole_command: WORMHOLE
+	abort_command: ABORT
+	play_command: PLAY
+	status_command: STATUS
+	test_command: TEST
+	turn_commands: TURN
 
 
 feature -- model attributes
@@ -70,7 +76,9 @@ feature -- model attributes
 	ok_or_error: STRING
 
 	-- game properties
---	galaxy: GALAXY
+	galaxy: GALAXY
+	shared_info: SHARED_INFORMATION
+	shared_info_access: SHARED_INFORMATION_ACCESS
 
 feature -- update states
 		-- Could use: (outside of class)
@@ -111,6 +119,11 @@ feature -- update states
 		do
 			mode := "test"
 		end
+
+--	set_galaxy (g: GALAXY)
+--		do
+--			galaxy := g
+--		end
 
 
 feature -- update variables used for output
@@ -170,9 +183,39 @@ feature -- states -- MUST MANUALLY UPDATE THE STATE AND MINI_STATE
 			clear_output_and_msgs
 		end
 
-	test
+
+feature -- player commands -- ************* in each of the execute commands, remember to add the new_turn_state or new_game_state ***********
+		-- new_game_state only used for the abort command
+	abort
 		do
-			output_states
+			abort_command.execute
+		end
+
+	play
+		do
+			play_command.execute
+		end
+
+	status
+		do
+			status_command.execute
+		end
+
+	test (a_threshold: INTEGER; j_threshold: INTEGER;  m_threshold: INTEGER; b_threshold: INTEGER; p_threshold: INTEGER)
+		do
+			test_command.add_thresholds (a_threshold, j_threshold, m_threshold, b_threshold, p_threshold)
+			test_command.execute
+		end
+
+	turn (action: ACTION)
+		do
+			turn_commands.execute (action)
+		end
+
+feature -- game properties
+	make_new_galaxy
+		do
+			create galaxy.make
 		end
 
 --------------------------------------------------------------------------------------------------------------------------------------
@@ -196,7 +239,7 @@ feature -- output to the screen
 			Result := output
 		end
 
-feature -- states_msg, movements_msg, sectors_msg, descriptions_msg, deaths_msg, (galaxy_msg not needed)
+feature {NONE} -- states_msg, movements_msg, sectors_msg, descriptions_msg, deaths_msg, (galaxy_msg not needed)
 		--@@@@@@@@@@@@ make all of these empty before each player command@@@@@@@@@@@@@@
 	states_msg: STRING
 	movements_msg: STRING
@@ -264,7 +307,6 @@ feature -- output_states, output_movements, output_sectors, output_descriptions,
 				output.append (", ")
 			end
 			output.append (ok_or_error)
-			output.append ("%N")
 			output.append (states_msg)
 		end
 
@@ -283,12 +325,12 @@ feature -- output_states, output_movements, output_sectors, output_descriptions,
 			---- "    [4,M]->fuel:3/3, actions_left_until_reproduction:1/1, turns_left:2"
 			---- "    [4,B]->fuel:3/3, actions_left_until_reproduction:1/1, turns_left:2"
 		do
+			output.append ("%N")
 			output.append ("  ")
 			output.append ("Movements:")
 			if not entities_moved then
 				output.append ("none")
 			else
-				output.append ("%N")
 				output.append (movements_msg)
 			end
 		end
@@ -298,11 +340,77 @@ feature -- output_states, output_movements, output_sectors, output_descriptions,
 			-- 1. write entities of each sectors to sectors_msg
 			--		- row 1, col 2
 			--		"    [1,2]->-,-,[-3,*],-"
+		local
+			sector : SECTOR
+			contents: ARRAYED_LIST [detachable ENTITY_ALPHABET]
+			contents_counter: INTEGER
+			printed_symbols_counter: INTEGER
+			occupant: ENTITY_ALPHABET
+			loop_counter: INTEGER
+			do_not_add: BOOLEAN
 		do
+			output.append ("%N")
 			output.append ("  ")
 			output.append ("Sectors:")
-			output.append ("%N")
-			output.append (sectors_msg)
+--			output.append (sectors_msg)
+			across 1 |..| shared_info.number_rows as row loop
+				across 1 |..| shared_info.number_columns as column loop
+					output.append ("%N")
+					sector := galaxy.grid[row.item, column.item]
+					contents := sector.contents
+					loop_counter := 1
+					do_not_add := false
+					output.append ("    ")
+					output.append ("[")
+					output.append (row.item.out)
+					output.append (",")
+					output.append (column.item.out)
+					output.append ("]")
+					output.append ("->")
+--					across 1 |..| shared_info.max_capacity as contents_index loop
+					from
+						contents_counter := 1
+						printed_symbols_counter := 0
+					until
+						contents_counter > contents.count
+					loop
+--						if attached {ENTITY_ALPHABET} contents.item as content then
+--							occupant := content
+--						end
+						occupant := contents[contents_counter]
+						if attached occupant then
+							output.append ("[")
+							output.append_integer (occupant.id)
+							output.append (",")
+							output.append_character (occupant.item)
+							output.append ("]")
+							do_not_add := true
+						else
+							output.append ("-")
+						end
+						if loop_counter <= 3 then
+							output.append (",")
+							loop_counter := loop_counter + 1
+						end
+						printed_symbols_counter:=printed_symbols_counter+1
+						contents_counter := contents_counter + 1
+					end
+
+					from
+
+					until
+						(shared_info.max_capacity - printed_symbols_counter)=0
+					loop
+						output.append("-")
+						printed_symbols_counter:=printed_symbols_counter+1
+						if loop_counter <= 3 then
+							output.append (",")
+							loop_counter := loop_counter + 1
+						end
+					end
+--						contents.forth
+				end
+			end
 		end
 
 	output_descriptions -- prints the descriptions of each entity (in ascending order of id)
@@ -325,9 +433,9 @@ feature -- output_states, output_movements, output_sectors, output_descriptions,
 			--				d. turns_left
 			--			- if attached, turns_left:N/A
 		do
+			output.append ("%N")
 			output.append ("  ")
 			output.append ("Descriptions:")
-			output.append ("%N")
 			output.append (descriptions_msg)
 		end
 
@@ -343,12 +451,12 @@ feature -- output_states, output_movements, output_sectors, output_descriptions,
 			--			- "      Planet got devoured by blackhole (id: -1) at Sector:3:3"
 			--		- removed entity from the sectors and descriptions
 		do
+			output.append ("%N")
 			output.append ("  ")
 			output.append ("Deaths This Turn:")
 			if not entities_died then
 				output.append ("none")
 			else
-				output.append ("%N")
 				output.append (deaths_msg)
 			end
 		end
@@ -357,7 +465,7 @@ feature -- output_states, output_movements, output_sectors, output_descriptions,
 			-- requires:
 			-- 1. galaxy
 		do
---			output.append (galaxy.out)
+			output.append (galaxy.out)
 		end
 
 end

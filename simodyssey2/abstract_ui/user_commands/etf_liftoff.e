@@ -14,7 +14,7 @@ feature -- command
 	liftoff
     	do
 			-- perform some update on the model state
---			model.default_update
+			model.turn (create {LIFTOFF_ACTION}.make)
 			etf_cmd_container.on_change.notify ([Current])
     	end
 

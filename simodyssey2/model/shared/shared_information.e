@@ -1,6 +1,6 @@
 note
 	description: "[
-		Common variables such as threshold for planet
+		Common variables such as threshold for movable entities
 		and constants such as number of stationary items for generation of the board.
 		]"
 	author: ""
@@ -17,9 +17,8 @@ feature{NONE}
 	make
 		do
 			-------------------- ADDED start --------------------
-			planet_id := default_planet_id
+			movable_id := default_movable_id
 			stationary_id := default_stationary_id
-			can_end_game := false
 			-------------------- ADDED end --------------------
 		end
 
@@ -34,6 +33,30 @@ feature
 	number_of_stationary_items: INTEGER = 10
 			-- The number of stationary_items in the grid
 
+	asteroid_threshold: INTEGER
+		-- used to determine the chance of an asteroid being put in a location
+		attribute
+			Result := 10
+		end
+
+	janitaur_threshold: INTEGER
+		-- used to determine the chance of a janitaur being put in a location
+		attribute
+			Result := 20
+		end
+
+	malevolent_threshold: INTEGER
+		-- used to determine the chance of a malevolent being put in a location
+		attribute
+			Result := 30
+		end
+
+	benign_threshold: INTEGER
+		-- used to determine the chance of a benign being put in a location
+		attribute
+			Result := 40
+		end
+
     planet_threshold: INTEGER
 		-- used to determine the chance of a planet being put in a location
 		attribute
@@ -44,48 +67,64 @@ feature
 		 -- max number of objects that can be stored in a location
 
 	-------------------- ADDED start --------------------
-	planet_id: INTEGER
+	movable_id: INTEGER
 
 	stationary_id: INTEGER
-
-	can_end_game: BOOLEAN
 	-------------------- ADDED end --------------------
 
 feature --commands
-	set_planet_threshold(threshold:INTEGER)
+	test(a_threshold: INTEGER; j_threshold: INTEGER; m_threshold: INTEGER; b_threshold: INTEGER; p_threshold: INTEGER)
+		--sets threshold values
 		require
 			valid_threshold:
-				0 < threshold and threshold <= 101
+				0 < a_threshold and a_threshold <= j_threshold and j_threshold <= m_threshold
+				and m_threshold <= b_threshold and b_threshold <= p_threshold and p_threshold <= 101
 		do
-			planet_threshold:=threshold
+			set_asteroid_threshold (a_threshold)
+			set_benign_threshold (b_threshold)
+			set_janitaur_threshold (j_threshold)
+			set_malevolent_threshold (m_threshold)
+			set_planet_threshold (p_threshold)
 		end
 
+	set_malevolent_threshold(threshhold:INTEGER)
+		do
+			malevolent_threshold:=threshhold
+		end
+
+	set_janitaur_threshold(threshhold:INTEGER)
+		do
+			janitaur_threshold:=threshhold
+		end
+
+	set_asteroid_threshold(threshhold:INTEGER)
+		do
+			asteroid_threshold:=threshhold
+		end
+	set_planet_threshold(threshhold:INTEGER)
+		do
+			planet_threshold:=threshhold
+		end
+
+	set_benign_threshold(threshhold:INTEGER)
+		do
+			benign_threshold:=threshhold
+		end
 	-------------------- ADDED start --------------------
 	reset_pid_sid
 		do
-			planet_id := default_planet_id
+			movable_id := default_movable_id
 			stationary_id := default_stationary_id
-		end
-
-	end_game
-		do
-			can_end_game := true
-		end
-
-	reset_end_state
-		do
-			can_end_game := false
 		end
 
 	reset
 		do
 			reset_pid_sid
-			reset_end_state
 		end
 
-	increment_planet_id
+	increment_movable_id
 		do
-			planet_id := planet_id + 1
+			movable_id := movable_id + 1
 		end
 
 	decrement_stationary_id
@@ -95,7 +134,7 @@ feature --commands
 
 
 feature {NONE} -- private attributes
-	default_planet_id: INTEGER
+	default_movable_id: INTEGER
 		do
 			Result := 1
 		end
