@@ -8,7 +8,7 @@ class
 	JANITAUR_ENT
 
 inherit
-	ENTITY
+	REPRODUCIBLE_ENT
 
 create
 	make
@@ -40,7 +40,7 @@ feature -- add the position
 
 feature -- fuel
 	increment_fuel_by(amount: INTEGER)
-		require
+		require else
 			valid_amount: amount > 0
 		do
 			if amount + fuel > max_fuel then
@@ -48,12 +48,12 @@ feature -- fuel
 			else
 				fuel := fuel + amount
 			end
-		ensure
+		ensure then
 			valid_life: fuel <= max_fuel
 		end
 
 	decrement_fuel_by(amount: INTEGER)
-		require
+		require else
 			valid_amount: amount > 0
 		do
 			if amount > fuel then
@@ -62,12 +62,12 @@ feature -- fuel
 			else
 				fuel := fuel - amount
 			end
-		ensure
+		ensure then
 			valid_fuel: fuel >= 0
 		end
 
 	change_fuel(amount: INTEGER)
-		require
+		require else
 			valid_amount: amount <=3 and amount >=0
 		do
 			fuel := amount
@@ -86,6 +86,11 @@ feature -- wormhole
 
 
 feature -- actions
+	reset_actions
+		do
+			actions_left := max_actions_left
+		end
+
 	decrement_actions
 		do
 			actions_left := actions_left - 1

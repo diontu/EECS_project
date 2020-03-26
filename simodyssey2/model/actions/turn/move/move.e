@@ -47,7 +47,8 @@ feature -- execute
 			explorer_entity_alphabet: ENTITY_ALPHABET
 
 			-- sector
-			sector: SECTOR
+			old_sector: SECTOR
+			new_sector: SECTOR
 
 			--quadrant
 			quadrant: INTEGER
@@ -76,7 +77,8 @@ feature -- execute
 				else
 					create mu.make
 					new_pos := mu.transform (exp.position, direction)
-					sector := model.galaxy.grid[new_pos.row, new_pos.col]
+					old_sector := model.galaxy.grid[exp.position.row, exp.position.col]
+					new_sector := model.galaxy.grid[new_pos.row, new_pos.col]
 
 					-- check if the explorer is currently landed -- error check
 					if exp.is_landed then
@@ -90,7 +92,7 @@ feature -- execute
 						model.states_msg_append (exp.position.col.out)
 					else
 						-- check if the sector is full -- error check
-						if sector.is_full then
+						if new_sector.is_full then
 							model.update_mini_state
 							model.error_state
 							model.states_msg_append ("%N")
@@ -120,10 +122,9 @@ feature -- execute
 								loop_counter := 1
 								found := false
 							until
-								loop_counter > sector.contents.count or found
+								loop_counter > old_sector.contents.count or found
 							loop
-								if attached {ENTITY_ALPHABET} sector.contents[loop_counter] as ent_alpha then
-									print("hi")
+								if attached {ENTITY_ALPHABET} old_sector.contents[loop_counter] as ent_alpha then
 									if ent_alpha.id = explorer_entity_alphabet.id then
 										found := true
 										quadrant := loop_counter
@@ -134,8 +135,8 @@ feature -- execute
 							model.movements_msg_append (quadrant.out)
 							model.movements_msg_append ("]")
 
-							sector.delete (explorer_entity_alphabet)
-							sector.put (explorer_entity_alphabet, new_pos)
+							old_sector.delete (explorer_entity_alphabet)
+							new_sector.put (explorer_entity_alphabet, new_pos)
 
 							model.movements_msg_append ("->")
 							model.movements_msg_append ("[")
@@ -148,9 +149,9 @@ feature -- execute
 								loop_counter := 1
 								found := false
 							until
-								loop_counter > sector.contents.count or found
+								loop_counter > new_sector.contents.count or found
 							loop
-								if attached {ENTITY_ALPHABET} sector.contents[loop_counter] as ent_alpha then
+								if attached {ENTITY_ALPHABET} new_sector.contents[loop_counter] as ent_alpha then
 									if ent_alpha.id = explorer_entity_alphabet.id then
 										found := true
 										quadrant := loop_counter

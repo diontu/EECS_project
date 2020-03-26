@@ -27,6 +27,7 @@ feature {NONE} -- Initialization
 			create sectors_msg.make_empty
 			create descriptions_msg.make_empty
 			create deaths_msg.make_empty
+			create deaths_by_asteroid_msg.make_empty
 
 			-- player command classes
 			create abort_command.make
@@ -44,6 +45,9 @@ feature {NONE} -- Initialization
 			mini_state := 0
 			mode := "none"
 			ok_or_error := "ok"
+
+			-- final state
+			is_gameover := false
 
 			-- game properties
 			create galaxy.placeholder
@@ -76,6 +80,9 @@ feature -- model attributes
 	mode: STRING
 	ok_or_error: STRING
 
+	-- final state
+	is_gameover: BOOLEAN
+
 	-- game properties
 	galaxy: GALAXY
 	shared_info: SHARED_INFORMATION
@@ -91,6 +98,9 @@ feature -- update states
 		-- 4. error_state
 		-- 5. play_mode -- (when player enters play)
 		-- 6. test_mode -- (when player enters test)
+		-- 7. none_mode -- (when game ends)
+		-- 8. gameover -- (when the game needs to end)
+		-- 9. not_gameover -- (when the game is back at it's non-gameover state)
 
 	update_state
 		do
@@ -121,6 +131,21 @@ feature -- update states
 	test_mode
 		do
 			mode := "test"
+		end
+
+	not_in_game_mode
+		do
+			mode := "none"
+		end
+
+	gameover
+		do
+			is_gameover := true
+		end
+
+	not_gameover
+		do
+			is_gameover := false
 		end
 
 --	set_galaxy (g: GALAXY)
@@ -228,7 +253,7 @@ feature -- game properties
 -- We will use the commands to display our outputs:
 -- 		output_states, output_movements, output_sectors, output_descriptions, output_deathts, output_galaxy
 -- To get the proper output, we will have to write the proper strings to the following variables respectively (except output_galaxy):
---		states_msg, movements_msg, sectors_msg, descriptions_msg, deaths_msg
+--		states_msg, movements_msg, sectors_msg, descriptions_msg, deaths_msg (deaths_by_asteroid too)
 
 -- Once we finish writing the proper strings to the variables, we then call the respective command to display it.
 
@@ -249,6 +274,7 @@ feature {NONE} -- states_msg, movements_msg, sectors_msg, descriptions_msg, deat
 	sectors_msg: STRING
 	descriptions_msg: STRING
 	deaths_msg: STRING
+	deaths_by_asteroid_msg: STRING
 
 feature -- clear msgs and output variable
 	clear_output_and_msgs
@@ -259,6 +285,7 @@ feature -- clear msgs and output variable
 			create sectors_msg.make_empty
 			create descriptions_msg.make_empty
 			create deaths_msg.make_empty
+			create deaths_by_asteroid_msg.make_empty
 		end
 
 
@@ -286,6 +313,11 @@ feature -- append commands
 	deaths_msg_append (s: STRING)
 		do
 			deaths_msg.append (s)
+		end
+
+	deaths_by_asteroid_msg_append (s: STRING)
+		do
+			deaths_by_asteroid_msg.append (s)
 		end
 
 feature -- output_states, output_movements, output_sectors, output_descriptions, output_deaths, output_galaxy
@@ -539,7 +571,7 @@ feature -- output_states, output_movements, output_sectors, output_descriptions,
 			-- requires:
 			-- 1. entities_died
 			--		if no entities_died -> "none"
-			-- 		if entities_died -> deaths_msg
+			-- 		if entities_died -> deaths_msg (deaths_by_asteroid_msg is a special case)
 			-- 2. deaths_msg
 			--		- custom msg on explorer death?
 			--		if death of planets
@@ -553,6 +585,7 @@ feature -- output_states, output_movements, output_sectors, output_descriptions,
 			if not entities_died then
 				output.append ("none")
 			else
+				output.append (deaths_by_asteroid_msg)
 				output.append (deaths_msg)
 			end
 		end

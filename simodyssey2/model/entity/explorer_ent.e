@@ -8,7 +8,7 @@ class
 	EXPLORER_ENT
 
 inherit
-	ENTITY
+	FUELED_ENT
 
 create
 	make
@@ -38,21 +38,15 @@ feature -- commands
 		end
 
 	increment_fuel_by(amount: INTEGER)
-		require
-			valid_amount: amount > 0
 		do
 			if amount + fuel > max_fuel then
 				fuel := max_fuel
 			else
 				fuel := fuel + amount
 			end
-		ensure
-			valid_life: fuel <= max_fuel
 		end
 
 	decrement_fuel_by(amount: INTEGER)
-		require
-			valid_amount: amount > 0
 		do
 			if amount > fuel then
 				fuel := 0
@@ -61,13 +55,9 @@ feature -- commands
 			else
 				fuel := fuel - amount
 			end
-		ensure
-			valid_fuel: fuel >= 0
 		end
 
 	change_fuel(amount: INTEGER)
-		require
-			valid_amount: amount <=3 and amount >=0
 		do
 			fuel := amount
 		end
@@ -121,12 +111,12 @@ feature -- commands
 			position := pos
 		end
 
-	explorer_in_wormhole
+	in_wormhole
 		do
 			used_wormhole := true
 		end
 
-	explorer_not_in_wormhole
+	not_in_wormhole
 		do
 			used_wormhole := false
 		end

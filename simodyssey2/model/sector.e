@@ -135,7 +135,7 @@ feature -- commands
 
 feature --command
 
-	put (new_component: ENTITY_ALPHABET; pos: TUPLE[INTEGER, INTEGER])
+	put (new_component: ENTITY_ALPHABET; pos: TUPLE[INTEGER, INTEGER]) -- adds the entity_alphabet on the board and the entity_ids if it doesn't already exist
 			-- put `new_component' in contents array
 		local
 			loop_counter: INTEGER
@@ -207,7 +207,7 @@ feature --command
 			component_put: not is_full implies contents.has (new_component)
 		end
 
-	delete(et: ENTITY_ALPHABET)
+	delete(et: ENTITY_ALPHABET) -- gets rid of the entity_alphabet from the board and from the board and the entity_ids
 		local
 			loop_counter: INTEGER
 			added: BOOLEAN
@@ -224,6 +224,7 @@ feature --command
 						if entity.id = et.id then
 							contents[loop_counter] := void
 							added := true
+							entity_ids.delete_entity (entity.id)
 						end
 					end
 				end
@@ -298,10 +299,12 @@ feature -- Queries
 				until
 					loop_counter > contents.count or Result
 				loop
-					if attached {WORMHOLE_ENT} contents [loop_counter] as temp_item  then
-						Result := true
-					end -- if
-					loop_counter := loop_counter + 1
+					if attached {ENTITY_ALPHABET} contents [loop_counter] as content then
+						if attached {WORMHOLE_ENT} content.entity then
+							Result := true
+						end -- if
+						loop_counter := loop_counter + 1
+					end
 				end
 		end
 
@@ -315,10 +318,50 @@ feature -- Queries
 				until
 					loop_counter > contents.count or Result
 				loop
-					if attached {BLACKHOLE_ENT} contents [loop_counter] as temp_item  then
-						Result := true
-					end -- if
-					loop_counter := loop_counter + 1
+					if attached {ENTITY_ALPHABET} contents [loop_counter] as content then
+						if attached {BLACKHOLE_ENT} content.entity then
+							Result := true
+						end -- if
+						loop_counter := loop_counter + 1
+					end
+				end
+		end
+
+	has_star: BOOLEAN
+	local
+	loop_counter : INTEGER
+			-- returns whether the location contains any stationary item
+		do
+		from
+					loop_counter := 1
+				until
+					loop_counter > contents.count or Result
+				loop
+					if attached {ENTITY_ALPHABET} contents [loop_counter] as content then
+						if attached {STAR_ENT} content.entity then
+							Result := true
+						end -- if
+						loop_counter := loop_counter + 1
+					end
+				end
+		end
+
+	has_bg: BOOLEAN
+	local
+	loop_counter : INTEGER
+			-- returns whether the location contains any stationary item
+		do
+		from
+					loop_counter := 1
+				until
+					loop_counter > contents.count or Result
+				loop
+					if attached {ENTITY_ALPHABET} contents [loop_counter] as content then
+						if attached {BLUE_GIANT_ENT} content.entity then
+							Result := true
+						end -- if
+						loop_counter := loop_counter + 1
+					end
 				end
 		end
 
@@ -332,12 +375,15 @@ feature -- Queries
 				until
 					loop_counter > contents.count or Result
 				loop
-					if attached {YELLOW_DWARF_ENT} contents [loop_counter] as temp_item  then
-						Result := true
-					end -- if
-					loop_counter := loop_counter + 1
+					if attached {ENTITY_ALPHABET} contents [loop_counter] as content then
+						if attached {YELLOW_DWARF_ENT} content.entity then
+							Result := true
+						end -- if
+						loop_counter := loop_counter + 1
+					end
 				end
 		end
+
 
 	has_pl: BOOLEAN
 	local
@@ -349,10 +395,12 @@ feature -- Queries
 				until
 					loop_counter > contents.count or Result
 				loop
-					if attached {PLANET_ENT} contents [loop_counter] as temp_item  then
-						Result := true
-					end -- if
-					loop_counter := loop_counter + 1
+					if attached {ENTITY_ALPHABET} contents [loop_counter] as content then
+						if attached {PLANET_ENT} content.entity then
+							Result := true
+						end -- if
+						loop_counter := loop_counter + 1
+					end
 				end
 		end
 
