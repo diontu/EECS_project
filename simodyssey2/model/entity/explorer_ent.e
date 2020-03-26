@@ -147,7 +147,7 @@ feature -- attributes
 
 	is_landed: BOOLEAN
 
-	position: TUPLE[INTEGER,INTEGER]
+	position: TUPLE[row: INTEGER; col: INTEGER]
 
 	death_row: INTEGER
 	death_column: INTEGER

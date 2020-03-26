@@ -47,8 +47,21 @@ feature -- execute
 
 			--logic
 			act(action)
+			-- if error exists, then skip entire if block
+-------------- print the outputs at the end of the if statement if no errors -------------
 			if model.ok_or_error.is_equal ("ok") then
 				-- perform check(entity), etc
+
+
+				-- display the outputs after the turn
+				model.output_states
+				model.output_movements
+				if model.mode.is_equal ("test") then
+					model.output_sectors
+					model.output_descriptions
+					model.output_deaths
+				end
+				model.output_galaxy
 			end
 		end
 

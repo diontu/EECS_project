@@ -13,11 +13,17 @@ create
 feature -- attributes
 	model: ETF_MODEL
 	model_access: ETF_MODEL_ACCESS
+--	shared_info: SHARED_INFORMATION
+--	shared_info_access: SHARED_INFORMATION_ACCESS
+--	entity_ids: ENTITY_IDS
+--	entity_ids_access: ENTITY_IDS_ACCESS
 
 feature -- constructor
 	make
 		do
 			model := model_access.m
+--			shared_info := shared_info_access.shared_info
+--			entity_ids := entity_ids_access.entity_ids
 		end
 
 feature -- execute
@@ -25,6 +31,8 @@ feature -- execute
 		do
 			--attach model here
 			model := model_access.m
+--			shared_info := shared_info_access.shared_info
+--			entity_ids := entity_ids_access.entity_ids
 
 			if model.mode.is_equal ("none") then
 				model.new_turn_state

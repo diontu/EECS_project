@@ -50,6 +50,22 @@ feature -- Constructor
             	id := shared_info.stationary_id
             	shared_info.decrement_stationary_id
             	entity := (create {WORMHOLE_ENT}.make)
+            elseif item.is_equal ('B') then
+            	id := shared_info.movable_id
+            	shared_info.increment_movable_id
+            	entity := (create {BENIGN_ENT}.make)
+            elseif item.is_equal ('M') then
+            	id := shared_info.movable_id
+            	shared_info.increment_movable_id
+            	entity := (create {MALEVOLENT_ENT}.make)
+            elseif item.is_equal ('J') then
+            	id := shared_info.movable_id
+            	shared_info.increment_movable_id
+            	entity := (create {JANITAUR_ENT}.make)
+            elseif item.is_equal ('A') then -- asteroid
+            	id := shared_info.movable_id
+            	shared_info.increment_movable_id
+            	entity := (create {ASTEROID_ENT}.make)
             else -- will never occur
             	id := -100
             	entity := (create {PLANET_ENT}.make)
@@ -105,8 +121,24 @@ feature -- commands
             	if attached {WORMHOLE_ENT} entity as wormhole then
             		wormhole.add_pos(pos)
             	end
-            else -- will never occur
-
+            elseif item.is_equal ('B') then
+            	if attached {BENIGN_ENT} entity as benign then
+            		benign.add_pos (pos)
+            	end
+            elseif item.is_equal ('M') then
+            	if attached {MALEVOLENT_ENT} entity as malevolent then
+            		malevolent.add_pos (pos)
+            	end
+            elseif item.is_equal ('J') then
+            	if attached {JANITAUR_ENT} entity as janitaur then
+            		janitaur.add_pos (pos)
+            	end
+            elseif item.is_equal ('A') then
+            	if attached {ASTEROID_ENT} entity as asteroid then
+            		asteroid.add_pos (pos)
+            	end
+            else
+            	-- will never occur
             end
 		end
 

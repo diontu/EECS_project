@@ -48,6 +48,7 @@ feature {NONE} -- Initialization
 			-- game properties
 			create galaxy.placeholder
 			shared_info := shared_info_access.shared_info
+			entity_ids := entity_ids_access.entity_ids
 
 			-- initial state
 			states_msg_append ("%N")
@@ -79,6 +80,8 @@ feature -- model attributes
 	galaxy: GALAXY
 	shared_info: SHARED_INFORMATION
 	shared_info_access: SHARED_INFORMATION_ACCESS
+	entity_ids: ENTITY_IDS
+	entity_ids_access: ENTITY_IDS_ACCESS
 
 feature -- update states
 		-- Could use: (outside of class)
@@ -419,7 +422,7 @@ feature -- output_states, output_movements, output_sectors, output_descriptions,
 			-- 		if star "    [-5,*]->Luminosity:5"
 			--			- in STAR, requires:
 			--				a. Luminosity
-			--		if not star "    [-3, W]->"
+			--		if not star "    [-3,W]->"
 			-- 		if explorer "    [0,E]->fuel:3/3, life:3/3, landed?:F"
 			--			- in EXPLORER, requires:
 			--				a. fuel
@@ -432,11 +435,104 @@ feature -- output_states, output_movements, output_sectors, output_descriptions,
 			--				c. visited
 			--				d. turns_left
 			--			- if attached, turns_left:N/A
+		local
+			all_entities: ARRAY[TUPLE[id: INTEGER; alphabet: detachable ENTITY_ALPHABET]]
 		do
+			all_entities := entity_ids.sorted_entity_ids
+
 			output.append ("%N")
 			output.append ("  ")
 			output.append ("Descriptions:")
-			output.append (descriptions_msg)
+
+			across all_entities as tuple loop
+				output.append ("%N")
+				output.append ("    ")
+				if attached {ENTITY_ALPHABET} tuple.item.alphabet as attached_entity_alphabet then
+					if attached {ENTITY} attached_entity_alphabet.entity as entity then
+						output.append ("[")
+						output.append (attached_entity_alphabet.id.out)
+						output.append (",")
+						output.append (attached_entity_alphabet.item.out)
+						output.append ("]")
+						output.append ("->")
+						if attached_entity_alphabet.id < 0 then
+							if attached {STAR_ENT} entity as star then
+								output.append ("Luminosity:")
+								output.append (star.luminosity.out)
+							end
+						elseif attached_entity_alphabet.id = 0 then
+							if attached {EXPLORER_ENT} entity as explorer then
+								output.append ("fuel:")
+								output.append (explorer.fuel.out)
+								output.append ("/3")
+								output.append (", ")
+								output.append ("life:")
+								output.append (explorer.life.out)
+								output.append ("/3")
+								output.append (", ")
+								output.append ("landed?:")
+								output.append (explorer.is_landed.out.at (1).out)
+							end
+						elseif attached_entity_alphabet.id > 0 then
+							if attached {PLANET_ENT} entity as planet then
+								output.append ("attached?:")
+								output.append (planet.attached_to_star.out.at (1).out)
+								output.append (", ")
+								output.append ("support_life?:")
+								output.append (planet.supports_life.out.at (1).out)
+								output.append (", ")
+								output.append ("visited?:")
+								output.append (planet.visited.out.at (1).out)
+								output.append (", ")
+								output.append ("turns_left:")
+								output.append (planet.turns_left.out)
+							elseif attached {BENIGN_ENT} entity as benign then
+								output.append ("fuel:")
+								output.append (benign.fuel.out)
+								output.append ("/3")
+								output.append (", ")
+								output.append ("actions_left_until_reproduction:")
+								output.append (benign.actions_left.out)
+								output.append ("/1")
+								output.append (", ")
+								output.append ("turns_left:")
+								output.append (benign.turns_left.out)
+							elseif attached {MALEVOLENT_ENT} entity as malevolent then
+								output.append ("fuel:")
+								output.append (malevolent.fuel.out)
+								output.append ("/3")
+								output.append (", ")
+								output.append ("actions_left_until_reproduction:")
+								output.append (malevolent.actions_left.out)
+								output.append ("/1")
+								output.append (", ")
+								output.append ("turns_left:")
+								output.append (malevolent.turns_left.out)
+							elseif attached {JANITAUR_ENT} entity as janitaur then
+								output.append ("fuel:")
+								output.append (janitaur.fuel.out)
+								output.append ("/5")
+								output.append (", ")
+								output.append ("load:")
+								output.append (janitaur.load_level.out)
+								output.append ("/2")
+								output.append (", ")
+								output.append ("actions_left_until_reproduction:")
+								output.append (janitaur.actions_left.out)
+								output.append ("/2")
+								output.append (", ")
+								output.append ("turns_left:")
+								output.append (janitaur.turns_left.out)
+							elseif attached {ASTEROID_ENT} entity as asteroid then
+								output.append ("turns_left:")
+								output.append (asteroid.turns_left.out)
+							end
+						end
+					end
+				end
+			end
+
+--			output.append (descriptions_msg)
 		end
 
 	output_deaths -- outputs the deaths of planets and explorer
@@ -466,6 +562,9 @@ feature -- output_states, output_movements, output_sectors, output_descriptions,
 			-- 1. galaxy
 		do
 			output.append (galaxy.out)
+-- ===============================================================================
+			output.append ("%N")
+			output.append (entity_ids.entity_ids.count.out)
 		end
 
 end

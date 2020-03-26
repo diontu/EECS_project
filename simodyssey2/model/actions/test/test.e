@@ -18,6 +18,10 @@ feature -- attributes
 	shared_info: SHARED_INFORMATION
 	shared_info_access: SHARED_INFORMATION_ACCESS
 
+	--entity_ids
+	entity_ids: ENTITY_IDS
+	entity_ids_access: ENTITY_IDS_ACCESS
+
 feature -- thresholds
 	a_threshold: INTEGER
 	j_threshold: INTEGER
@@ -30,6 +34,7 @@ feature -- constructor
 		do
 			model := model_access.m
 			shared_info := shared_info_access.shared_info
+			entity_ids := entity_ids_access.entity_ids
 		end
 
 feature -- add thresholds
@@ -70,6 +75,7 @@ feature -- execute
 			-- attach model
 			model := model_access.m
 			shared_info := shared_info_access.shared_info
+			entity_ids := entity_ids_access.entity_ids
 
 			-- next turn state
 			model.new_turn_state
@@ -95,6 +101,8 @@ feature -- execute
 					model.output_states
 				else
 					--TODO: implement logic for TEST
+					entity_ids.delete_all
+					shared_info.reset
 					shared_info.test(a_threshold, j_threshold, m_threshold, b_threshold, p_threshold)
 					model.make_new_galaxy
 

@@ -91,17 +91,31 @@ feature -- commands
 	delete_entity(id: INTEGER) -- check if working properly
 		local
 			temp: TUPLE[INTEGER, detachable ENTITY_ALPHABET]
+			deleted: BOOLEAN
+			new_entity_ids: ARRAY[TUPLE[INTEGER, detachable ENTITY_ALPHABET]]
 		do
+			create new_entity_ids.make_empty
+				-- find the element, and switch it with the head, then remove the head
 			across entity_ids.lower |..| entity_ids.upper as tuple_index loop
-				if attached {ENTITY_ALPHABET} entity_ids[tuple_index.item].at (2) as entity then
-					if entity.id = id then
-						--swap the head and the element and remove the head
-						temp := entity_ids[tuple_index.item]
-						entity_ids.force (entity_ids[1], tuple_index.item)
-						entity_ids.force (temp, 1)
-						entity_ids.remove_head (1)
+				if not deleted then
+					if attached {ENTITY_ALPHABET} entity_ids[tuple_index.item].alphabet as entity then
+						if entity.id = id then
+							--swap the head and the element and remove the head
+							temp := entity_ids[tuple_index.item]
+							entity_ids.force (entity_ids[1], tuple_index.item)
+							entity_ids.force (temp, 1)
+							entity_ids.remove_head (1)
+							deleted := true
+						end
 					end
 				end
+			end
+				-- shift the array to the left <<
+			if deleted then
+				across 2 |..| entity_ids.upper as non_shifted_index loop
+					new_entity_ids.force (entity_ids.at (non_shifted_index.item), new_entity_ids.count + 1)
+				end
+				entity_ids := new_entity_ids
 			end
 		end
 
@@ -137,6 +151,6 @@ feature -- query
 		end
 
 feature -- attribute
-	entity_ids: ARRAY[TUPLE[INTEGER, detachable ENTITY_ALPHABET]]
+	entity_ids: ARRAY[TUPLE[id: INTEGER; alphabet: detachable ENTITY_ALPHABET]]
 
 end

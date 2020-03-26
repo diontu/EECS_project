@@ -115,6 +115,14 @@ feature -- commands
 					-------------------- ADDED start --------------------
 					if attached {PLANET_ENT} entity.entity as planet_entity then
 						planet_entity.set_turns(turn)
+					elseif attached {BENIGN_ENT} entity.entity as benign_entity then
+						benign_entity.set_turns (turn)
+					elseif attached {MALEVOLENT_ENT} entity.entity as malevolent_entity then
+						malevolent_entity.set_turns (turn)
+					elseif attached {JANITAUR_ENT} entity.entity as janitaur_entity then
+						janitaur_entity.set_turns (turn)
+					elseif attached {ASTEROID_ENT} entity.entity as asteroid_entity then
+						asteroid_entity.set_turns (turn)
 					end
 					-------------------- ADDED end --------------------
 
@@ -205,11 +213,11 @@ feature --command
 			added: BOOLEAN
 		do
 --			contents.prune_all (et)
-			loop_counter := 1
 			from
+				loop_counter := 1
 				added := false
 			until
-				added = true
+				loop_counter > contents.count or added = true
 			loop
 				if attached contents[loop_counter] as content then
 					if attached {ENTITY_ALPHABET} content as entity then
