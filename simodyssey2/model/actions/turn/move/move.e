@@ -90,6 +90,7 @@ feature -- execute
 						model.states_msg_append (exp.position.row.out)
 						model.states_msg_append (":")
 						model.states_msg_append (exp.position.col.out)
+						model.output_states
 					else
 						-- check if the sector is full -- error check
 						if new_sector.is_full then
