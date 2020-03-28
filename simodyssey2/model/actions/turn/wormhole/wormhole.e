@@ -82,11 +82,34 @@ feature -- execute --  should only allow the explorer, benign and malevolent use
 						temp_col := random.rchoose (1, 5)
 						new_sector := model.galaxy.grid[temp_row,temp_col]
 						if not new_sector.is_full then
+							model.movements_msg_append ("%N")
+							model.movements_msg_append ("    ")
+							model.movements_msg_append ("[")
+							model.movements_msg_append (entity_alphabet.id.out)
+							model.movements_msg_append (",")
+							model.movements_msg_append (entity_alphabet.item.out)
+							model.movements_msg_append ("]:")
+							model.movements_msg_append ("[")
+							model.movements_msg_append (explorer.position.row.out)
+							model.movements_msg_append (",")
+							model.movements_msg_append (explorer.position.col.out)
+							model.movements_msg_append (",")
+							model.movements_msg_append (sector.return_quadrent_exp.out)
+							model.movements_msg_append ("]")
+							model.movements_msg_append ("->")
+							model.movements_msg_append ("[")
+							model.movements_msg_append (temp_row.out)
+							model.movements_msg_append (",")
+							model.movements_msg_append (temp_col.out)
+							model.movements_msg_append (",")
 							explorer.add_pos (temp_row,temp_col)
 							explorer.in_wormhole
 							added := true
 							sector.delete (entity_alphabet)
 							new_sector.put (entity_alphabet,[temp_row,temp_col])
+							model.movements_msg_append (new_sector.return_quadrent_exp.out)
+							model.movements_msg_append ("]")
+
 						end
 						end
 				end
@@ -108,11 +131,33 @@ feature -- execute --  should only allow the explorer, benign and malevolent use
 						temp_col := random.rchoose (1, 5)
 						new_sector := model.galaxy.grid[temp_row,temp_col]
 						if not new_sector.is_full then
+							model.movements_msg_append ("%N")
+							model.movements_msg_append ("    ")
+							model.movements_msg_append ("[")
+							model.movements_msg_append (entity_alphabet.id.out)
+							model.movements_msg_append (",")
+							model.movements_msg_append (entity_alphabet.item.out)
+							model.movements_msg_append ("]:")
+							model.movements_msg_append ("[")
+							model.movements_msg_append (benign.position.row.out)
+							model.movements_msg_append (",")
+							model.movements_msg_append (benign.position.col.out)
+							model.movements_msg_append (",")
+							model.movements_msg_append (sector.return_quadrent_ben.out)
+							model.movements_msg_append ("]")
+							model.movements_msg_append ("->")
+							model.movements_msg_append ("[")
+							model.movements_msg_append (temp_row.out)
+							model.movements_msg_append (",")
+							model.movements_msg_append (temp_col.out)
+							model.movements_msg_append (",")
 							benign.add_pos (temp_row,temp_col)
 							benign.in_wormhole
 							added := true
 							sector.delete (entity_alphabet)
 							new_sector.put (entity_alphabet,[temp_row,temp_col])
+							model.movements_msg_append (new_sector.return_quadrent_ben.out)
+							model.movements_msg_append ("]")
 
 						end
 				end
@@ -135,11 +180,33 @@ feature -- execute --  should only allow the explorer, benign and malevolent use
 						temp_col := random.rchoose (1, 5)
 						new_sector := model.galaxy.grid[temp_row,temp_col]
 						if not new_sector.is_full then
+							model.movements_msg_append ("%N")
+							model.movements_msg_append ("    ")
+							model.movements_msg_append ("[")
+							model.movements_msg_append (entity_alphabet.id.out)
+							model.movements_msg_append (",")
+							model.movements_msg_append (entity_alphabet.item.out)
+							model.movements_msg_append ("]:")
+							model.movements_msg_append ("[")
+							model.movements_msg_append (malevolent.position.row.out)
+							model.movements_msg_append (",")
+							model.movements_msg_append (malevolent.position.col.out)
+							model.movements_msg_append (",")
+							model.movements_msg_append (sector.return_quadrent_mal.out)
+							model.movements_msg_append ("]")
+							model.movements_msg_append ("->")
+							model.movements_msg_append ("[")
+							model.movements_msg_append (temp_row.out)
+							model.movements_msg_append (",")
+							model.movements_msg_append (temp_col.out)
+							model.movements_msg_append (",")
 							malevolent.add_pos (temp_row,temp_col)
 							malevolent.in_wormhole
 							added := true
 							sector.delete (entity_alphabet)
 							new_sector.put (entity_alphabet,[temp_row,temp_col])
+							model.movements_msg_append (new_sector.return_quadrent_mal.out)
+							model.movements_msg_append ("]")
 						end
 				end
 
