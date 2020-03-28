@@ -24,6 +24,7 @@ feature {NONE} -- constructor
 			is_landed := false
 			position := default_pos
 			used_wormhole := false
+			did_pass := false
 		end
 
 feature -- commands
@@ -35,6 +36,12 @@ feature -- commands
 			is_landed := false
 			position := default_pos
 			used_wormhole := false
+		end
+
+	reset_turn_state
+		do
+			not_in_wormhole
+			did_not_pass_turn
 		end
 
 	increment_fuel_by(amount: INTEGER)
@@ -121,6 +128,16 @@ feature -- commands
 			used_wormhole := false
 		end
 
+	pass_turn
+		do
+			did_pass := true
+		end
+
+	did_not_pass_turn
+		do
+			did_pass := false
+		end
+
 	died
 		do
 			is_dead := true
@@ -143,6 +160,8 @@ feature -- attributes
 	is_landed: BOOLEAN
 
 	position: TUPLE[row: INTEGER; col: INTEGER]
+
+	did_pass: BOOLEAN
 
 	death_row: INTEGER
 	death_column: INTEGER

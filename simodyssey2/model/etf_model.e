@@ -54,6 +54,9 @@ feature {NONE} -- Initialization
 			shared_info := shared_info_access.shared_info
 			entity_ids := entity_ids_access.entity_ids
 
+			-- explorer
+			explorer_ent_alpha := entity_ids.get_entity_alphabet (0)
+
 			-- initial state
 			states_msg_append ("%N")
 			states_msg_append ("  ")
@@ -89,6 +92,9 @@ feature -- model attributes
 	shared_info_access: SHARED_INFORMATION_ACCESS
 	entity_ids: ENTITY_IDS
 	entity_ids_access: ENTITY_IDS_ACCESS
+
+	-- explorer
+	explorer_ent_alpha: ENTITY_ALPHABET
 
 feature -- update states
 		-- Could use: (outside of class)
@@ -190,6 +196,11 @@ feature -- states -- MUST MANUALLY UPDATE THE STATE AND MINI_STATE
 			-- variables used for output
 			entities_moved := false
 			entities_died := false
+
+			-- reset explorer state for the turn
+			if attached {EXPLORER_ENT} explorer_ent_alpha as explorer then
+				explorer.reset_turn_state
+			end
 
 			-- clear output and msgs
 			clear_output_and_msgs
