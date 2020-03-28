@@ -300,6 +300,10 @@ feature -- reproduce of fueled entities
 		local
 			sector: SECTOR -- current sector
 			duplicate_ent_alpha: ENTITY_ALPHABET
+
+			quadrant: INTEGER
+			loop_counter: INTEGER
+			found: BOOLEAN
 		do
 			sector := model.galaxy.grid[ent_alpha.entity.position.row, ent_alpha.entity.position.col]
 			if attached {REPRODUCIBLE_ENT} ent_alpha.entity as reproducible then
@@ -317,6 +321,36 @@ feature -- reproduce of fueled entities
 							duplicate_reproducible.set_turns (gen.rchoose (0, 2))
 						end
 						reproducible.reset_actions
+
+						-- outputs
+						model.movements_msg_append ("%N")
+						model.movements_msg_append ("      ")
+						model.movements_msg_append ("reproduced [")
+						model.movements_msg_append (attached_dup_ent_alpha.id.out)
+						model.movements_msg_append (",")
+						model.movements_msg_append (attached_dup_ent_alpha.item.out)
+						model.movements_msg_append ("] at [")
+						model.movements_msg_append (attached_dup_ent_alpha.entity.position.row.out)
+						model.movements_msg_append (",")
+						model.movements_msg_append (attached_dup_ent_alpha.entity.position.col.out)
+						model.movements_msg_append (",")
+						from
+							quadrant := 1
+							loop_counter := 1
+							found := false
+						until
+							loop_counter > sector.contents.count or found
+						loop
+							if attached {ENTITY_ALPHABET} sector.contents[loop_counter] as ent_alpha_inner then
+								if attached_dup_ent_alpha.id = ent_alpha_inner.id then
+									found := true
+									quadrant := loop_counter
+								end
+							end
+							loop_counter := loop_counter + 1
+						end
+						model.movements_msg_append (quadrant.out)
+						model.movements_msg_append ("]")
 					end
 				else
 					if not (reproducible.actions_left = 0) then
@@ -852,9 +886,7 @@ feature -- the outputs for the deaths of things...
 				model.deaths_msg_append (benign.actions_left.out)
 				model.deaths_msg_append ("/1")
 				model.deaths_msg_append (", ")
-				model.deaths_msg_append ("turns_left:")
-				model.deaths_msg_append (benign.turns_left.out)
-				model.deaths_msg_append (",")
+				model.deaths_msg_append ("turns_left:N/A,")
 				model.deaths_msg_append ("%N")
 				model.deaths_msg_append ("      ")
 				model.deaths_msg_append (custom_string)
@@ -867,9 +899,7 @@ feature -- the outputs for the deaths of things...
 				model.deaths_msg_append (malevolent.actions_left.out)
 				model.deaths_msg_append ("/1")
 				model.deaths_msg_append (", ")
-				model.deaths_msg_append ("turns_left:")
-				model.deaths_msg_append (malevolent.turns_left.out)
-				model.deaths_msg_append (",")
+				model.deaths_msg_append ("turns_left:N/A,")
 				model.deaths_msg_append ("%N")
 				model.deaths_msg_append ("      ")
 				model.deaths_msg_append (custom_string)
@@ -886,9 +916,7 @@ feature -- the outputs for the deaths of things...
 				model.deaths_msg_append (janitaur.actions_left.out)
 				model.deaths_msg_append ("/2")
 				model.deaths_msg_append (", ")
-				model.deaths_msg_append ("turns_left:")
-				model.deaths_msg_append (janitaur.turns_left.out)
-				model.deaths_msg_append (",")
+				model.deaths_msg_append ("turns_left:N/A,")
 				model.deaths_msg_append ("%N")
 				model.deaths_msg_append ("      ")
 				model.deaths_msg_append (custom_string)
@@ -902,16 +930,12 @@ feature -- the outputs for the deaths of things...
 				model.deaths_msg_append ("visited?:")
 				model.deaths_msg_append (planet.visited.out.at (1).out)
 				model.deaths_msg_append (", ")
-				model.deaths_msg_append ("turns_left:")
-				model.deaths_msg_append (planet.turns_left.out)
-				model.deaths_msg_append (",")
+				model.deaths_msg_append ("turns_left:N/A,")
 				model.deaths_msg_append ("%N")
 				model.deaths_msg_append ("      ")
 				model.deaths_msg_append (custom_string)
 			elseif attached {ASTEROID_ENT} ent_alpha.entity as asteroid then
-				model.deaths_msg_append ("turns_left:")
-				model.deaths_msg_append (asteroid.turns_left.out)
-				model.deaths_msg_append (",")
+				model.deaths_msg_append ("turns_left:N/A,")
 				model.deaths_msg_append ("%N")
 				model.deaths_msg_append ("      ")
 				model.deaths_msg_append (custom_string)
