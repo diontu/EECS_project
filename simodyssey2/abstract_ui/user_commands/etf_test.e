@@ -15,6 +15,7 @@ feature -- command
 		require else
 			test_precond(a_threshold, j_threshold, m_threshold, b_threshold, p_threshold)
     	do
+
 			-- perform some update on the model state
 			model.test (a_threshold, j_threshold, m_threshold, b_threshold, p_threshold)
 			etf_cmd_container.on_change.notify ([Current])

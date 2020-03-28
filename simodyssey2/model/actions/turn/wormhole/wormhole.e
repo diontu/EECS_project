@@ -20,7 +20,7 @@ feature -- constructor
 			model := model_access.m
 		end
 
-feature -- execute
+feature -- execute --  should only allow the explorer, benign and malevolent use
 	execute(entity_alphabet: ENTITY_ALPHABET)
 	local
 		explorer : EXPLORER_ENT
@@ -32,12 +32,11 @@ feature -- execute
 		added: BOOLEAN
 		temp_row : INTEGER
 		temp_col : INTEGER
-		new_entities : ARRAY[ENTITY_ALPHABET]
 		random : RANDOM_GENERATOR_ACCESS
 
 		do
 			model := model_access.m
-		
+
 			if model.mode.is_equal ("none") then
 					model.update_mini_state
 					model.error_state

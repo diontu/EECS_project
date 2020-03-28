@@ -39,9 +39,11 @@ feature -- commands
 		end
 
 	get_entities_at(tuple: TUPLE[INTEGER,INTEGER]): ARRAY[ENTITY_ALPHABET]
+			-- returns sorted array
 		local
 			temp_row: INTEGER
 			temp_column: INTEGER
+			temp_entity: ENTITY_ALPHABET
 		do
 			create Result.make_empty
 			if attached {INTEGER} tuple.at (1) as row and attached {INTEGER} tuple.at (2) as column then
@@ -57,9 +59,22 @@ feature -- commands
 					end
 				end
 			end
+			-- sorting
+			across 1 |..| (Result.count - 1) as i_index loop
+				across (i_index.item + 1) |..| Result.count as j_index loop
+					if attached {INTEGER} Result.at (j_index.item).id as second and attached {INTEGER} Result.at(i_index.item).id as first then
+						if first > second then
+							temp_entity := Result.at(j_index.item)
+							Result.put (Result.at (i_index.item), j_index.item)
+							Result.put (temp_entity, i_index.item)
+						end
+					end
+				end
+			end
 		end
 
 	get_movable_entities: ARRAY[ENTITY_ALPHABET]
+			-- returns sorted array
 		local
 			temp: ARRAY[ENTITY_ALPHABET]
 			temp_entity: ENTITY_ALPHABET

@@ -141,7 +141,7 @@ feature --command
 			loop_counter: INTEGER
 			found: BOOLEAN
 			does_exist_in_entities: BOOLEAN
-			emptY_space_found: BOOLEAN
+			empty_space_found: BOOLEAN
 			temp_contents: ARRAYED_LIST [detachable ENTITY_ALPHABET]
 
 		do
@@ -161,12 +161,12 @@ feature --command
 
 			if not found then
 				from
-					contents.start
+					loop_counter := 1
 				until
-					contents.exhausted or empty_space_found
+					loop_counter > contents.count or empty_space_found
 				loop
-					if not attached contents.item then
-						contents.replace (new_component)
+					if not attached contents[loop_counter] then
+						contents[loop_counter] := new_component
 						empty_space_found := true
 						new_component.add_pos (pos)
 						does_exist_in_entities := false
@@ -181,7 +181,7 @@ feature --command
 							entity_ids.add (new_component.id, new_component)
 						end
 					end
-					contents.forth
+					loop_counter := loop_counter + 1
 				end
 
 				if not empty_space_found then
@@ -303,8 +303,8 @@ feature -- Queries
 						if attached {WORMHOLE_ENT} content.entity then
 							Result := true
 						end -- if
-						loop_counter := loop_counter + 1
 					end
+					loop_counter := loop_counter + 1
 				end
 		end
 
@@ -322,8 +322,8 @@ feature -- Queries
 						if attached {BLACKHOLE_ENT} content.entity then
 							Result := true
 						end -- if
-						loop_counter := loop_counter + 1
 					end
+					loop_counter := loop_counter + 1
 				end
 		end
 
@@ -341,8 +341,8 @@ feature -- Queries
 						if attached {STAR_ENT} content.entity then
 							Result := true
 						end -- if
-						loop_counter := loop_counter + 1
 					end
+					loop_counter := loop_counter + 1
 				end
 		end
 
@@ -360,8 +360,8 @@ feature -- Queries
 						if attached {BLUE_GIANT_ENT} content.entity then
 							Result := true
 						end -- if
-						loop_counter := loop_counter + 1
 					end
+					loop_counter := loop_counter + 1
 				end
 		end
 
@@ -379,8 +379,8 @@ feature -- Queries
 						if attached {YELLOW_DWARF_ENT} content.entity then
 							Result := true
 						end -- if
-						loop_counter := loop_counter + 1
 					end
+					loop_counter := loop_counter + 1
 				end
 		end
 
@@ -399,8 +399,27 @@ feature -- Queries
 						if attached {PLANET_ENT} content.entity then
 							Result := true
 						end -- if
-						loop_counter := loop_counter + 1
 					end
+					loop_counter := loop_counter + 1
+				end
+		end
+
+	has_benign: BOOLEAN
+	local
+	loop_counter : INTEGER
+			-- returns whether the location contains any stationary item
+		do
+		from
+					loop_counter := 1
+				until
+					loop_counter > contents.count or Result
+				loop
+					if attached {ENTITY_ALPHABET} contents [loop_counter] as content then
+						if attached {BENIGN_ENT} content.entity then
+							Result := true
+						end -- if
+					end
+					loop_counter := loop_counter + 1
 				end
 		end
 

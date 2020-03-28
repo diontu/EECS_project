@@ -120,6 +120,7 @@ loop
 end
 
 			if found_life then
+							explorer.land -- added to make the turn easier for me to implement
 							model.update_state
 							model.states_msg_append ("%N")
 							model.states_msg_append ("  ")

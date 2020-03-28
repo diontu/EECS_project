@@ -21,6 +21,7 @@ feature {NONE} -- Constructor
 			visited := false
 			turns_left := 0
 			position := [0,0]
+			is_dead := false
 		end
 
 feature -- commands
@@ -54,6 +55,11 @@ feature -- commands
 			position := pos
 		end
 
+	died
+		do
+			is_dead := true
+		end
+
 feature -- attributes
 	attached_to_star: BOOLEAN
 
@@ -64,5 +70,7 @@ feature -- attributes
 	turns_left: INTEGER
 
 	position: TUPLE[row : INTEGER; column: INTEGER]
+
+	is_dead: BOOLEAN
 
 end

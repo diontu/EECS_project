@@ -18,6 +18,7 @@ feature {NONE} -- constructor
 		do
 			turns_left := 0
 			position := [0,0]
+			is_dead := false
 		end
 
 feature -- add the position	
@@ -39,8 +40,14 @@ feature -- turns
 			turns_left := turns_left - 1
 		end
 
+	died
+		do
+			is_dead := true
+		end
+
 feature -- attributes
 	position: TUPLE[INTEGER, INTEGER]
 	turns_left: INTEGER
+	is_dead: BOOLEAN
 
 end

@@ -96,8 +96,6 @@ feature -- actions
 
 feature -- turns
 	set_turns (amount: INTEGER)
-		require
-			valid_amount: amount >=0 and amount <= 3
 		do
 			turns_left := amount
 		end
@@ -109,6 +107,11 @@ feature -- turns
 
 feature -- is_dead?
 	is_dead: BOOLEAN
+
+	died
+		do
+			is_dead := true
+		end
 
 	set_death (row: INTEGER; col:  INTEGER)
 		do

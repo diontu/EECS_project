@@ -27,4 +27,19 @@ feature -- actions left
 		deferred
 		end
 
+feature -- turns_left
+	turns_left: INTEGER
+		deferred
+		end
+
+	set_turns (amount: INTEGER)
+		require
+			valid_amount: amount >=0 and amount <= 3
+		deferred
+		end
+
+	decrement_turns
+		deferred
+		end
+
 end
