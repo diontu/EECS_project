@@ -63,6 +63,6 @@ feature -- attributes
 
 	turns_left: INTEGER
 
-	position: TUPLE[INTEGER,INTEGER]
+	position: TUPLE[row : INTEGER; column: INTEGER]
 
 end

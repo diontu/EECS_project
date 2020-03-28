@@ -11,7 +11,7 @@ feature
 	add_pos(pos: TUPLE[INTEGER,INTEGER])
 		deferred
 		end
-		
+
 	position: TUPLE[row: INTEGER; col:INTEGER]
 		deferred
 		end

@@ -121,7 +121,7 @@ feature -- benign attributes
 	actions_left: INTEGER
 
 	turns_left: INTEGER
-	position: TUPLE[INTEGER, INTEGER]
+	position: TUPLE[row :INTEGER; col: INTEGER]
 
 	used_wormhole: BOOLEAN
 

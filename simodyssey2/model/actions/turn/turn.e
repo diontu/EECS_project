@@ -28,7 +28,6 @@ feature -- constructor -- ALWAYS MAKE SURE THE MODEL IS ATTACHED
 		do
 			model := model_access.m
 			entity_ids := entity_ids_access.entity_ids
-
 			create land_command.make
 			create liftoff_command.make
 			create move_command.make
@@ -61,8 +60,6 @@ feature -- execute
 			if model.ok_or_error.is_equal ("ok") then
 				-- perform check(entity), etc
 				check_entity (explorer_entity_alphabet)
-
-
 				-- display the outputs after the turn
 				model.output_states
 				model.output_movements
@@ -83,7 +80,13 @@ feature -- execute
 
 feature {NONE} -- make private features
 	act (action: ACTION)
+		local
+
+		explorer_entity_alphabet : ENTITY_ALPHABET
+
 		do
+			entity_ids := entity_ids_access.entity_ids
+			explorer_entity_alphabet := entity_ids.get_entity_alphabet (0)
 			if action.action.is_equal ("land") then
 				land_command.execute
 
@@ -100,7 +103,7 @@ feature {NONE} -- make private features
 				pass_command.execute
 
 			elseif action.action.is_equal ("wormhole") then
-				wormhole_command.execute
+				wormhole_command.execute(explorer_entity_alphabet)
 			end
 		end
 
@@ -124,6 +127,9 @@ feature {NONE} -- check_entity
 				if attached {FUELED_ENT} ent as fueled_ent then
 					if not fueled_ent.used_wormhole then
 						fueled_ent.decrement_fuel_by (1)
+					end
+					if fueled_ent.used_wormhole then
+						fueled_ent.not_in_wormhole
 					end
 				end
 
@@ -364,6 +370,5 @@ feature {NONE} -- check_entity
 
 			end
 		end
-
 
 end

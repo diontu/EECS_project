@@ -13,7 +13,7 @@ create
 feature -- constructor
 	make
 		do
-			
+
 		end
 
 feature --

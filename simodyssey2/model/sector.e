@@ -404,5 +404,22 @@ feature -- Queries
 				end
 		end
 
-
+	return_quadrent_exp: INTEGER
+local
+	loop_counter : INTEGER
+			-- returns quadrent of explorer
+		do
+		from
+					loop_counter := 1
+				until
+					loop_counter > contents.count
+				loop
+					if attached {ENTITY_ALPHABET} contents [loop_counter] as content then
+						if attached {EXPLORER_ENT} content.entity then
+							Result := loop_counter
+						end -- if
+						loop_counter := loop_counter + 1
+					end
+				end
+		end
 end
