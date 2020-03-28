@@ -62,7 +62,8 @@ feature -- execute
 					model.states_msg_append (exp.position.col.out)
 					model.output_states
 				else
-				explorer.liftoff
+					explorer.liftoff
+					model.update_state
 					model.states_msg_append ("%N")
 					model.states_msg_append ("  ")
 					model.states_msg_append ("Explorer has lifted off from planet at Sector:")

@@ -44,7 +44,7 @@ feature -- execute
 
 				model.states_msg_append ("%N")
 				model.states_msg_append ("  ")
-				model.states_msg_append ("To start a new mission, please abort the current one first.")
+				model.states_msg_append ("Negative on that request:no mission in progress.")
 				model.output_states
 			else
 				-- if the mode in in play or test
@@ -61,7 +61,7 @@ feature -- execute
 			if exp.is_landed then
 				model.states_msg_append ("%N")
 				model.states_msg_append ("  ")
-				model.states_msg_append ("Explorer status report:Stationary on planet surface at:[")
+				model.states_msg_append ("Explorer status report:Stationary on planet surface at [")
 				model.states_msg_append (exp.position.row.out)
 				model.states_msg_append (",")
 				model.states_msg_append (exp.position.col.out)
@@ -78,7 +78,7 @@ feature -- execute
 			else
 				model.states_msg_append ("%N")
 				model.states_msg_append ("  ")
-				model.states_msg_append ("Explorer status report:Travelling at cruise speed at[")
+				model.states_msg_append ("Explorer status report:Travelling at cruise speed at [")
 				model.states_msg_append (exp.position.row.out)
 				model.states_msg_append (",")
 				model.states_msg_append (exp.position.col.out)

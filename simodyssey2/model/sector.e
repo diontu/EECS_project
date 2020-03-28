@@ -437,8 +437,8 @@ local
 						if attached {EXPLORER_ENT} content.entity then
 							Result := loop_counter
 						end -- if
-						loop_counter := loop_counter + 1
 					end
+					loop_counter := loop_counter + 1
 				end
 		end
 end

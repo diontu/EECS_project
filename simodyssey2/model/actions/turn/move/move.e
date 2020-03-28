@@ -130,8 +130,8 @@ feature -- execute
 										found := true
 										quadrant := loop_counter
 									end
-									loop_counter := loop_counter + 1
 								end
+								loop_counter := loop_counter + 1
 							end
 							model.movements_msg_append (quadrant.out)
 							model.movements_msg_append ("]")
@@ -157,8 +157,8 @@ feature -- execute
 										found := true
 										quadrant := loop_counter
 									end
-									loop_counter := loop_counter + 1
 								end
+								loop_counter := loop_counter + 1
 							end
 							model.movements_msg_append (quadrant.out)
 							model.movements_msg_append ("]")

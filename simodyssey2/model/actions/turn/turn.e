@@ -105,13 +105,15 @@ feature -- execute
 										if attached {PLANET_ENT} entity_alphabet.item.entity and sector.has_star then
 											if attached {PLANET_ENT} entity_alphabet.item.entity as planet then
 												-- if the sector has a star
-												planet.attach_to_star
-												if sector.has_yd then
-													num := gen.rchoose(1,2)
-													if num = 2 then
-														planet.support_life
+												if not planet.attached_to_star then -- addition start
+													planet.attach_to_star
+													if sector.has_yd then
+														num := gen.rchoose(1,2)
+														if num = 2 then
+															planet.support_life
+														end
 													end
-												end
+												end -- addition end
 											end
 										else -- else planet doesn't have a star or if it's another movable entity
 											if sector.has_wormhole and (attached {BENIGN_ENT} entity_alphabet.item.entity or attached {MALEVOLENT_ENT} entity_alphabet.item.entity) then
@@ -155,23 +157,40 @@ feature -- execute
 							end
 						end
 					end
+					-- display the outputs after the turn
+					model.output_states
+					if not (model.is_gameover and explorer.is_landed) then
+						model.output_movements
+						if model.mode.is_equal ("test") then
+							model.output_sectors
+							model.output_descriptions
+							model.output_deaths
+						end
+						model.output_galaxy
+					end
+
+					-- entering this if statement ends the game
+					if model.is_gameover then
+						model.not_in_game_mode
+						model.not_gameover
+					end
 				end
 
-				-- display the outputs after the turn
-				model.output_states
-				model.output_movements
-				if model.mode.is_equal ("test") then
-					model.output_sectors
-					model.output_descriptions
-					model.output_deaths
-				end
-				model.output_galaxy
+--				-- display the outputs after the turn
+--				model.output_states
+--				model.output_movements
+--				if model.mode.is_equal ("test") then
+--					model.output_sectors
+--					model.output_descriptions
+--					model.output_deaths
+--				end
+--				model.output_galaxy
 
-				-- entering this if statement ends the game
-				if model.is_gameover then
-					model.not_in_game_mode
-					model.not_gameover
-				end
+--				-- entering this if statement ends the game
+--				if model.is_gameover then
+--					model.not_in_game_mode
+--					model.not_gameover
+--				end
 			end
 		end
 
@@ -435,8 +454,6 @@ feature -- behave
 								asteroid.died
 								model.an_entity_died
 
-								sector.delete (ea)
-
 								custom_string.append ("Asteroid ")
 								custom_string.append ("got imploded by janitaur (id: ")
 								custom_string.append (ent_alpha.id.out)
@@ -447,6 +464,8 @@ feature -- behave
 
 								movements_append_deaths (ea, sector)
 								deaths_append_deaths (ea, custom_string)
+
+								sector.delete (ea)
 							end
 						end
 					end
@@ -464,8 +483,6 @@ feature -- behave
 							malevolent.died
 							model.an_entity_died
 
-							sector.delete (ea)
-
 							custom_string.append ("Malevolent ")
 							custom_string.append ("got destroyed by benign (id: ")
 							custom_string.append (ent_alpha.id.out)
@@ -476,6 +493,8 @@ feature -- behave
 
 							movements_append_deaths (ea, sector)
 							deaths_append_deaths (ea, custom_string)
+
+							sector.delete (ea)
 						end
 					end
 				end
@@ -488,7 +507,7 @@ feature -- behave
 					ent_alp
 				loop
 					if attached {ENTITY_ALPHABET} ent_alp.item as ea then
-						if attached {EXPLORER_ENT} ea.entity and sector.has_benign then
+						if attached {EXPLORER_ENT} ea.entity and not sector.has_benign then
 							if attached {EXPLORER_ENT} ea.entity as explorer then
 								if not explorer.is_landed then
 									explorer.decrement_life_by (1)
@@ -496,14 +515,14 @@ feature -- behave
 										explorer.died
 										model.an_entity_died
 
-										sector.delete (ea)
-
 										custom_string.append ("Explorer got lost in space - out of life support at Sector:")
 										custom_string.append (ent_alpha.entity.position.row.out)
 										custom_string.append (":")
 										custom_string.append (ent_alpha.entity.position.col.out)
 
 										deaths_append_deaths (ea, custom_string)
+
+										sector.delete (ea)
 
 										model.gameover
 									end
@@ -518,7 +537,7 @@ feature -- behave
 				if sector.has_star then
 					planet_ent.attach_to_star
 					if sector.has_yd then
-						num := gen.rchoose (0, 2)
+						num := gen.rchoose (1, 2)
 						if num = 2 then
 							planet_ent.support_life
 						end
@@ -545,7 +564,7 @@ feature {NONE} -- check_entity
 
 				-- includes explorer, benign, malevolent, janitaur
 
-				-- if the entity didn't use the wormhole
+				-- if the entity didn't use the wormhole and the explorer did not pass
 				if attached {FUELED_ENT} ent as fueled_ent then
 					if not fueled_ent.used_wormhole then
 						if attached {EXPLORER_ENT} ent as explorer then
@@ -556,9 +575,9 @@ feature {NONE} -- check_entity
 							fueled_ent.decrement_fuel_by (1)
 						end
 					end
---					if fueled_ent.used_wormhole then
---						fueled_ent.not_in_wormhole
---					end
+					if fueled_ent.used_wormhole then
+						fueled_ent.not_in_wormhole
+					end
 				end
 
 				-- if the entity got to a sector with a star
@@ -624,9 +643,7 @@ feature {NONE} -- check_entity
 							variable_deaths_msg.append (benign.actions_left.out)
 							variable_deaths_msg.append ("/1")
 							variable_deaths_msg.append (", ")
-							variable_deaths_msg.append ("turns_left:")
-							variable_deaths_msg.append (benign.turns_left.out)
-							variable_deaths_msg.append (",")
+							variable_deaths_msg.append ("turns_left:N/A,")
 							variable_deaths_msg.append ("%N")
 							variable_deaths_msg.append ("      ")
 							variable_deaths_msg.append ("Benign got lost in space - out of fuel at Sector:")
@@ -643,8 +660,7 @@ feature {NONE} -- check_entity
 							variable_deaths_msg.append (malevolent.actions_left.out)
 							variable_deaths_msg.append ("/1")
 							variable_deaths_msg.append (", ")
-							variable_deaths_msg.append ("turns_left:")
-							variable_deaths_msg.append (malevolent.turns_left.out)
+							variable_deaths_msg.append ("turns_left:N/A,")
 							variable_deaths_msg.append ("%N")
 							variable_deaths_msg.append ("      ")
 							variable_deaths_msg.append ("Malevolent got lost in space - out of fuel at Sector:")
@@ -665,8 +681,7 @@ feature {NONE} -- check_entity
 							variable_deaths_msg.append (janitaur.actions_left.out)
 							variable_deaths_msg.append ("/2")
 							variable_deaths_msg.append (", ")
-							variable_deaths_msg.append ("turns_left:")
-							variable_deaths_msg.append (janitaur.turns_left.out)
+							variable_deaths_msg.append ("turns_left:N/A,")
 							variable_deaths_msg.append ("%N")
 							variable_deaths_msg.append ("      ")
 							variable_deaths_msg.append ("Janitaur got lost in space - out of fuel at Sector:")
@@ -730,9 +745,7 @@ feature {NONE} -- check_entity
 						variable_deaths_msg.append (benign.actions_left.out)
 						variable_deaths_msg.append ("/1")
 						variable_deaths_msg.append (", ")
-						variable_deaths_msg.append ("turns_left:")
-						variable_deaths_msg.append (benign.turns_left.out)
-						variable_deaths_msg.append (",")
+						variable_deaths_msg.append ("turns_left:N/A,")
 						variable_deaths_msg.append ("%N")
 						variable_deaths_msg.append ("      ")
 						variable_deaths_msg.append ("Benign got devoured by blackhole (id: -1) at Sector:3:3")
@@ -746,9 +759,7 @@ feature {NONE} -- check_entity
 						variable_deaths_msg.append (malevolent.actions_left.out)
 						variable_deaths_msg.append ("/1")
 						variable_deaths_msg.append (", ")
-						variable_deaths_msg.append ("turns_left:")
-						variable_deaths_msg.append (malevolent.turns_left.out)
-						variable_deaths_msg.append (",")
+						variable_deaths_msg.append ("turns_left:N/A,")
 						variable_deaths_msg.append ("%N")
 						variable_deaths_msg.append ("      ")
 						variable_deaths_msg.append ("Malevolent got devoured by blackhole (id: -1) at Sector:3:3")
@@ -766,9 +777,7 @@ feature {NONE} -- check_entity
 						variable_deaths_msg.append (janitaur.actions_left.out)
 						variable_deaths_msg.append ("/2")
 						variable_deaths_msg.append (", ")
-						variable_deaths_msg.append ("turns_left:")
-						variable_deaths_msg.append (janitaur.turns_left.out)
-						variable_deaths_msg.append (",")
+						variable_deaths_msg.append ("turns_left:N/A,")
 						variable_deaths_msg.append ("%N")
 						variable_deaths_msg.append ("      ")
 						variable_deaths_msg.append ("Janitaur got devoured by blackhole (id: -1) at Sector:3:3")
@@ -783,9 +792,7 @@ feature {NONE} -- check_entity
 						variable_deaths_msg.append ("visited?:")
 						variable_deaths_msg.append (planet.visited.out.at (1).out)
 						variable_deaths_msg.append (", ")
-						variable_deaths_msg.append ("turns_left:")
-						variable_deaths_msg.append (planet.turns_left.out)
-						variable_deaths_msg.append (",")
+						variable_deaths_msg.append ("turns_left:N/A,")
 						variable_deaths_msg.append ("%N")
 						variable_deaths_msg.append ("      ")
 						variable_deaths_msg.append ("Planet got devoured by blackhole (id: -1) at Sector:3:3")
