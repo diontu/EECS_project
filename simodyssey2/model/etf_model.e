@@ -356,9 +356,6 @@ feature -- output_states, output_movements, output_sectors, output_descriptions,
 			--		if explorer passes -> don't show their movements, turn is used
 			-- 		if planet moves to a full planet,
 			--			- "    [2,P]:[1,3,2]->"
-			-- *** NEW ***
-			---- "    [4,M]->fuel:3/3, actions_left_until_reproduction:1/1, turns_left:2"
-			---- "    [4,B]->fuel:3/3, actions_left_until_reproduction:1/1, turns_left:2"
 		do
 			output.append ("%N")
 			output.append ("  ")
@@ -517,7 +514,11 @@ feature -- output_states, output_movements, output_sectors, output_descriptions,
 								output.append (planet.visited.out.at (1).out)
 								output.append (", ")
 								output.append ("turns_left:")
-								output.append (planet.turns_left.out)
+								if planet.attached_to_star then
+									output.append ("N/A")
+								else
+									output.append (planet.turns_left.out)
+								end
 							elseif attached {BENIGN_ENT} entity as benign then
 								output.append ("fuel:")
 								output.append (benign.fuel.out)
@@ -578,6 +579,7 @@ feature -- output_states, output_movements, output_sectors, output_descriptions,
 			--			- "    [19,P]->attached?:F, support_life?:F, visited?:F, turns_left: N/A,"
 			--			- "      Planet got devoured by blackhole (id: -1) at Sector:3:3"
 			--		- removed entity from the sectors and descriptions
+			-- NOTE: when an entity dies, you have to say that it died with their ".died" command
 		do
 			output.append ("%N")
 			output.append ("  ")

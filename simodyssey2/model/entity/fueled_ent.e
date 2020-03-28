@@ -63,6 +63,10 @@ feature -- death of entity deferred
 		deferred
 		end
 
+	died
+		deferred
+		end
+
 	is_dead: BOOLEAN
 		deferred
 		end

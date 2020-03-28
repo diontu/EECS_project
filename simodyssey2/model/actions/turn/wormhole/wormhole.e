@@ -21,8 +21,8 @@ feature -- constructor
 			model := model_access.m
 		end
 
-feature -- execute
-	execute
+feature -- execute -- should only allow the explorer, benign and malevolent use
+	execute (entity_alphabet: ENTITY_ALPHABET)
 		do
 
 		end

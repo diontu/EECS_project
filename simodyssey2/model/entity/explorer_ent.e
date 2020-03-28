@@ -121,6 +121,11 @@ feature -- commands
 			used_wormhole := false
 		end
 
+	died
+		do
+			is_dead := true
+		end
+
 	set_death (row: INTEGER; col:  INTEGER)
 		do
 			death_row := row
