@@ -359,7 +359,7 @@ feature -- output_states, output_movements, output_sectors, output_descriptions,
 		do
 			output.append ("%N")
 			output.append ("  ")
-			output.append ("Movements:")
+			output.append ("Movement:")
 			if not entities_moved then
 				output.append ("none")
 			else
@@ -597,9 +597,6 @@ feature -- output_states, output_movements, output_sectors, output_descriptions,
 			-- 1. galaxy
 		do
 			output.append (galaxy.out)
--- ===============================================================================
-			output.append ("%N")
-			output.append (entity_ids.entity_ids.count.out)
 		end
 
 end
