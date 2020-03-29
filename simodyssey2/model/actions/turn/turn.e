@@ -34,6 +34,8 @@ feature -- constructor -- ALWAYS MAKE SURE THE MODEL IS ATTACHED
 			create move_command.make
 			create pass_command.make
 			create wormhole_command.make
+
+			new_sector_full := false
 		ensure
 			attached_model: attached model
 		end
@@ -120,6 +122,7 @@ feature -- execute
 												wormhole_command.execute (entity_alphabet.item)
 											else
 												-- movement for the other movable entities
+												new_sector_full := false
 												movement (entity_alphabet.item)
 											end
 											check_entity(entity_alphabet.item)
@@ -173,6 +176,9 @@ feature -- execute
 					if model.is_gameover then
 						model.not_in_game_mode
 						model.not_gameover
+						if explorer.is_dead then
+							model.output_last_message
+						end
 					end
 				end
 
@@ -307,6 +313,14 @@ feature -- movement of other movable entities
 				end
 				model.movements_msg_append (quadrant.out)
 				model.movements_msg_append ("]")
+			else
+				if attached {FUELED_ENT} ent_alpha.entity then
+					new_sector_full := true
+				elseif attached {ASTEROID_ENT} ent_alpha.entity then
+					new_sector_full := true
+				elseif attached {PLANET_ENT} ent_alpha.entity then
+					new_sector_full := true
+				end
 			end
 		end
 
@@ -398,6 +412,7 @@ feature -- behave
 							-- entity dies
 							fueled_ent.died
 							model.an_entity_died
+							create custom_string.make_empty
 
 							if attached {BENIGN_ENT} ent_alp.entity then
 								custom_string.append ("Benign ")
@@ -406,6 +421,7 @@ feature -- behave
 							elseif attached {JANITAUR_ENT} ent_alp.entity  then
 								custom_string.append ("Janitaur ")
 							end
+
 							custom_string.append ("got destroyed by asteroid (id: ")
 							custom_string.append (ent_alpha.id.out)
 							custom_string.append (") at Sector:")
@@ -453,9 +469,10 @@ feature -- behave
 								janitaur_ent.load_janitaur
 								asteroid.died
 								model.an_entity_died
+								create custom_string.make_empty
 
 								custom_string.append ("Asteroid ")
-								custom_string.append ("got imploded by janitaur (id: ")
+								custom_string.append ("imploded by janitaur (id: ")
 								custom_string.append (ent_alpha.id.out)
 								custom_string.append (") at Sector:")
 								custom_string.append (ent_alpha.entity.position.row.out)
@@ -482,9 +499,10 @@ feature -- behave
 						if attached {MALEVOLENT_ENT} ea.entity as malevolent then
 							malevolent.died
 							model.an_entity_died
+							create custom_string.make_empty
 
 							custom_string.append ("Malevolent ")
-							custom_string.append ("got destroyed by benign (id: ")
+							custom_string.append ("destroyed by benign (id: ")
 							custom_string.append (ent_alpha.id.out)
 							custom_string.append (") at Sector:")
 							custom_string.append (ent_alpha.entity.position.row.out)
@@ -514,11 +532,15 @@ feature -- behave
 									if explorer.life = 0 then
 										explorer.died
 										model.an_entity_died
+										create custom_string.make_empty
 
 										custom_string.append ("Explorer got lost in space - out of life support at Sector:")
 										custom_string.append (ent_alpha.entity.position.row.out)
 										custom_string.append (":")
 										custom_string.append (ent_alpha.entity.position.col.out)
+
+										model.last_msg_append (custom_string)
+										model.states_msg_append (model.last_message)
 
 										deaths_append_deaths (ea, custom_string)
 
@@ -526,6 +548,7 @@ feature -- behave
 
 										model.gameover
 									end
+									movements_append_deaths (ea, sector)
 								end
 							end
 						end
@@ -548,6 +571,8 @@ feature -- behave
 			end
 		end
 
+feature -- helper variable for check_entity
+	new_sector_full: BOOLEAN
 
 feature {NONE} -- check_entity
 	check_entity (ent_alpha: ENTITY_ALPHABET)
@@ -572,7 +597,9 @@ feature {NONE} -- check_entity
 								fueled_ent.decrement_fuel_by (1)
 							end
 						else
-							fueled_ent.decrement_fuel_by (1)
+							if not new_sector_full then
+								fueled_ent.decrement_fuel_by (1)
+							end
 						end
 					end
 					if fueled_ent.used_wormhole then
@@ -635,6 +662,12 @@ feature {NONE} -- check_entity
 							variable_deaths_msg.append (ent.position.row.out)
 							variable_deaths_msg.append (":")
 							variable_deaths_msg.append (ent.position.col.out)
+
+							model.last_msg_append ("Explorer got lost in space - out of fuel at Sector:")
+							model.last_msg_append (ent.position.row.out)
+							model.last_msg_append (":")
+							model.last_msg_append (ent.position.col.out)
+							model.states_msg_append (model.last_message)
 
 							-- make it so that the game has to end
 							model.gameover
@@ -738,6 +771,9 @@ feature {NONE} -- check_entity
 						variable_deaths_msg.append ("      ")
 						variable_deaths_msg.append ("Explorer got devoured by blackhole (id: -1) at Sector:3:3")
 
+						model.last_msg_append ("Explorer got lost in space - out of fuel at Sector:3:3")
+						model.states_msg_append (model.last_message)
+
 						-- make it so that the game has to end
 						model.gameover
 
@@ -804,9 +840,7 @@ feature {NONE} -- check_entity
 						variable_deaths_msg.append ("Planet got devoured by blackhole (id: -1) at Sector:3:3")
 					elseif attached {ASTEROID_ENT} ent as asteroid then
 						asteroid.died
-						variable_deaths_msg.append ("turns_left:")
-						variable_deaths_msg.append (asteroid.turns_left.out)
-						variable_deaths_msg.append (",")
+						variable_deaths_msg.append ("turns_left:N/A,")
 						variable_deaths_msg.append ("%N")
 						variable_deaths_msg.append ("      ")
 						variable_deaths_msg.append ("Asteroid got devoured by blackhole (id: -1) at Sector:3:3")
@@ -837,7 +871,11 @@ feature -- the outputs for the deaths of things...
 		do
 			model.movements_msg_append ("%N")
 			model.movements_msg_append ("      ")
-			model.movements_msg_append ("destroyed ")
+			if attached {EXPLORER_ENT} ent_alpha.entity then
+				model.movements_msg_append ("attacked ")
+			else
+				model.movements_msg_append ("destroyed ")
+			end
 			model.movements_msg_append ("[")
 			model.movements_msg_append (ent_alpha.id.out)
 			model.movements_msg_append (",")
@@ -894,7 +932,7 @@ feature -- the outputs for the deaths of things...
 				model.deaths_msg_append (",")
 				model.deaths_msg_append ("%N")
 				model.deaths_msg_append ("      ")
-				model.deaths_msg_append ("Explorer got devoured by blackhole (id: -1) at Sector:3:3")
+				model.deaths_msg_append (custom_string)
 
 			elseif attached {BENIGN_ENT} ent_alpha.entity as benign then
 				model.deaths_msg_append ("fuel:")

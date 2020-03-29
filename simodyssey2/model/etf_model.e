@@ -28,6 +28,7 @@ feature {NONE} -- Initialization
 			create descriptions_msg.make_empty
 			create deaths_msg.make_empty
 			create deaths_by_asteroid_msg.make_empty
+			create last_msg.make_empty
 
 			-- player command classes
 			create abort_command.make
@@ -198,7 +199,7 @@ feature -- states -- MUST MANUALLY UPDATE THE STATE AND MINI_STATE
 			entities_died := false
 
 			-- reset explorer state for the turn
-			if attached {EXPLORER_ENT} explorer_ent_alpha as explorer then
+			if attached {EXPLORER_ENT} explorer_ent_alpha.entity as explorer then
 				explorer.reset_turn_state
 			end
 
@@ -286,6 +287,7 @@ feature {NONE} -- states_msg, movements_msg, sectors_msg, descriptions_msg, deat
 	descriptions_msg: STRING
 	deaths_msg: STRING
 	deaths_by_asteroid_msg: STRING
+	last_msg: STRING
 
 feature -- clear msgs and output variable
 	clear_output_and_msgs
@@ -297,6 +299,7 @@ feature -- clear msgs and output variable
 			create descriptions_msg.make_empty
 			create deaths_msg.make_empty
 			create deaths_by_asteroid_msg.make_empty
+			create last_msg.make_empty
 		end
 
 
@@ -329,6 +332,11 @@ feature -- append commands
 	deaths_by_asteroid_msg_append (s: STRING)
 		do
 			deaths_by_asteroid_msg.append (s)
+		end
+
+	last_msg_append (s: STRING)
+		do
+			last_msg.append (s)
 		end
 
 feature -- output_states, output_movements, output_sectors, output_descriptions, output_deaths, output_galaxy
@@ -608,6 +616,25 @@ feature -- output_states, output_movements, output_sectors, output_descriptions,
 			-- 1. galaxy
 		do
 			output.append (galaxy.out)
+		end
+
+	output_last_message
+		do
+			output.append (last_message)
+		end
+
+	last_message: STRING -- outputs the last messsage
+		-- requires:
+		-- 1. last_msg
+		-- 		- append messages the last message to last_msg
+		do
+			create Result.make_empty
+			Result.append ("%N")
+			Result.append ("  ")
+			Result.append (last_msg)
+			Result.append ("%N")
+			Result.append ("  ")
+			Result.append ("The game has ended. You can start a new game.")
 		end
 
 end
