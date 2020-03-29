@@ -455,8 +455,8 @@ local
 						if attached {BENIGN_ENT} content.entity then
 							Result := loop_counter
 						end -- if
-						loop_counter := loop_counter + 1
 					end
+					loop_counter := loop_counter + 1
 				end
 		end
 		return_quadrent_mal: INTEGER
@@ -473,8 +473,8 @@ local
 						if attached {MALEVOLENT_ENT} content.entity then
 							Result := loop_counter
 						end -- if
-						loop_counter := loop_counter + 1
 					end
+					loop_counter := loop_counter + 1
 				end
 		end
 end
