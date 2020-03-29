@@ -27,6 +27,7 @@ feature {NONE} -- constructor
 			did_pass := false
 		end
 
+
 feature -- commands
 	reset
 		do
@@ -149,6 +150,10 @@ feature -- commands
 			death_column := col
 		end
 
+	entity : STRING
+	do
+		Result := "explorer"
+	end
 
 feature -- attributes
 	life: INTEGER
@@ -177,6 +182,7 @@ feature -- private attributes
 		end
 
 	used_wormhole: BOOLEAN
+
 
 invariant
 	valid_life: life >= 0 and life <= max_life

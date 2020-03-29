@@ -578,6 +578,12 @@ feature {NONE} -- check_entity
 					if fueled_ent.used_wormhole then
 						fueled_ent.not_in_wormhole
 					end
+					if attached {EXPLORER_ENT} ent as explorer then
+						if explorer.did_pass then
+							explorer.did_not_pass_turn
+						end
+
+					end
 				end
 
 				-- if the entity got to a sector with a star

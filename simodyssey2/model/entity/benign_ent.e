@@ -118,6 +118,12 @@ feature -- is_dead?
 			death_column := col
 		end
 
+feature
+entity : STRING
+do
+	Result := "benign"
+end
+
 feature -- benign attributes
 	fuel: INTEGER
 	actions_left: INTEGER

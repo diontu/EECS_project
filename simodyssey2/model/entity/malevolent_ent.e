@@ -118,6 +118,11 @@ feature -- is_dead?
 			death_row := row
 			death_column := col
 		end
+feature
+	entity : STRING
+	do
+		Result := "malevolent"
+	end
 
 feature -- benign attributes
 	fuel: INTEGER

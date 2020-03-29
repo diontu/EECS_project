@@ -62,8 +62,6 @@ feature -- execute
 					model.states_msg_append (exp.position.col.out)
 					model.output_states
 				else
-					explorer.liftoff
-					model.states_msg_append (explorer.is_landed.out)
 					model.update_state
 					model.states_msg_append ("%N")
 					model.states_msg_append ("  ")
@@ -72,6 +70,7 @@ feature -- execute
 					model.states_msg_append (":")
 					model.states_msg_append (exp.position.col.out)
 				--	model.output_states
+					explorer.liftoff
 				end
 				end
 				end

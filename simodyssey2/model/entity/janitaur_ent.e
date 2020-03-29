@@ -73,6 +73,10 @@ feature -- fuel
 			fuel := amount
 		end
 
+	entity : STRING
+	do
+		Result := "janituar"
+	end
 feature -- wormhole
 	in_wormhole
 		do

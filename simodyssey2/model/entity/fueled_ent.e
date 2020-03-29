@@ -41,6 +41,10 @@ feature -- fuel deferred
 		deferred
 		end
 
+	entity : STRING
+	deferred
+	end
+
 feature -- wormhole usage deferred
 	used_wormhole: BOOLEAN
 		deferred
