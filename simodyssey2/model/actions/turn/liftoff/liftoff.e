@@ -63,6 +63,7 @@ feature -- execute
 					model.output_states
 				else
 					explorer.liftoff
+					model.states_msg_append (explorer.is_landed.out)
 					model.update_state
 					model.states_msg_append ("%N")
 					model.states_msg_append ("  ")

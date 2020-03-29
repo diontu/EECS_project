@@ -452,8 +452,10 @@ local
 					loop_counter > contents.count
 				loop
 					if attached {ENTITY_ALPHABET} contents [loop_counter] as content then
-						if attached {BENIGN_ENT} content.entity then
+						if attached {BENIGN_ENT} content.entity as ben then
+							if ben.used_wormhole then
 							Result := loop_counter
+							end
 						end -- if
 					end
 					loop_counter := loop_counter + 1
@@ -470,8 +472,10 @@ local
 					loop_counter > contents.count
 				loop
 					if attached {ENTITY_ALPHABET} contents [loop_counter] as content then
-						if attached {MALEVOLENT_ENT} content.entity then
+						if attached {MALEVOLENT_ENT} content.entity as mel then
+							if mel.used_wormhole then
 							Result := loop_counter
+							end
 						end -- if
 					end
 					loop_counter := loop_counter + 1

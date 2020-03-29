@@ -143,17 +143,17 @@ feature -- execute --  should only allow the explorer, benign and malevolent use
 							model.movements_msg_append (",")
 							model.movements_msg_append (benign.position.col.out)
 							model.movements_msg_append (",")
-							model.movements_msg_append (sector.return_quadrent_ben.out)
-							model.movements_msg_append ("]")
-							model.movements_msg_append ("->")
-							model.movements_msg_append ("[")
-							model.movements_msg_append (temp_row.out)
-							model.movements_msg_append (",")
-							model.movements_msg_append (temp_col.out)
-							model.movements_msg_append (",")
 							benign.add_pos (temp_row,temp_col)
 							benign.in_wormhole
 							added := true
+							model.movements_msg_append (sector.return_quadrent_ben.out)
+													model.movements_msg_append ("]")
+													model.movements_msg_append ("->")
+													model.movements_msg_append ("[")
+													model.movements_msg_append (temp_row.out)
+													model.movements_msg_append (",")
+													model.movements_msg_append (temp_col.out)
+													model.movements_msg_append (",")
 							sector.delete (entity_alphabet)
 							new_sector.put (entity_alphabet,[temp_row,temp_col])
 							model.movements_msg_append (new_sector.return_quadrent_ben.out)
@@ -166,7 +166,6 @@ feature -- execute --  should only allow the explorer, benign and malevolent use
 
 			if attached {MALEVOLENT_ENT} entity_alphabet.entity as mal then
 				malevolent := mal
-
 				sector := model.galaxy.grid[malevolent.position.row, malevolent.position.col]
 
 				if sector.has_wormhole then
@@ -192,6 +191,8 @@ feature -- execute --  should only allow the explorer, benign and malevolent use
 							model.movements_msg_append (",")
 							model.movements_msg_append (malevolent.position.col.out)
 							model.movements_msg_append (",")
+							malevolent.in_wormhole
+							added := true
 							model.movements_msg_append (sector.return_quadrent_mal.out)
 							model.movements_msg_append ("]")
 							model.movements_msg_append ("->")
@@ -201,8 +202,6 @@ feature -- execute --  should only allow the explorer, benign and malevolent use
 							model.movements_msg_append (temp_col.out)
 							model.movements_msg_append (",")
 							malevolent.add_pos (temp_row,temp_col)
-							malevolent.in_wormhole
-							added := true
 							sector.delete (entity_alphabet)
 							new_sector.put (entity_alphabet,[temp_row,temp_col])
 							model.movements_msg_append (new_sector.return_quadrent_mal.out)
