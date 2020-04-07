@@ -11,8 +11,8 @@ create
 	make
 
 feature -- attributes
-	model: ETF_MODEL
-	model_access: ETF_MODEL_ACCESS
+	game_state: GAME_STATE
+	game_state_access: GAME_STATE_ACCESS
 
 	--shared info
 	shared_info: SHARED_INFORMATION
@@ -32,7 +32,7 @@ feature -- thresholds
 feature -- constructor
 	make -- add the formal parameters
 		do
-			model := model_access.m
+			game_state := game_state_access.gs
 			shared_info := shared_info_access.shared_info
 			entity_ids := entity_ids_access.entity_ids
 		end
@@ -72,50 +72,50 @@ feature -- add thresholds
 feature -- execute
 	execute
 		do
-			-- attach model
-			model := model_access.m
+			-- attach game_state
+			game_state := game_state_access.gs
 			shared_info := shared_info_access.shared_info
 			entity_ids := entity_ids_access.entity_ids
 
 			-- next turn state
-			model.new_turn_state
+			game_state.new_turn_state
 
-			if not model.mode.is_equal ("none") then
-				model.update_mini_state
-				model.error_state
+			if not game_state.mode.is_equal ("none") then
+				game_state.update_mini_state
+				game_state.error_state
 
-				model.states_msg_append ("%N")
-				model.states_msg_append ("  ")
-				model.states_msg_append ("To start a new mission, please abort the current one first.")
+				game_state.states_msg_append ("%N")
+				game_state.states_msg_append ("  ")
+				game_state.states_msg_append ("To start a new mission, please abort the current one first.")
 
-				model.output_states
+				game_state.output_states
 			else
 				if not thresholds_are_non_decreasing_order then
-					model.update_mini_state
-					model.error_state
+					game_state.update_mini_state
+					game_state.error_state
 
-					model.states_msg_append ("%N")
-					model.states_msg_append ("  ")
-					model.states_msg_append ("Thresholds should be non-decreasing order.")
+					game_state.states_msg_append ("%N")
+					game_state.states_msg_append ("  ")
+					game_state.states_msg_append ("Thresholds should be non-decreasing order.")
 
-					model.output_states
+					game_state.output_states
 				else
 					--TODO: implement logic for TEST
 					entity_ids.delete_all
 					shared_info.reset
 					shared_info.test(a_threshold, j_threshold, m_threshold, b_threshold, p_threshold)
-					model.make_new_galaxy
+					game_state.make_new_galaxy
 
-					model.update_state
-					model.test_mode
-					model.ok_state
+					game_state.update_state
+					game_state.test_mode
+					game_state.ok_state
 
-					model.output_states
-					model.output_movements
-					model.output_sectors
-					model.output_descriptions
-					model.output_deaths
-					model.output_galaxy
+					game_state.output_states
+					game_state.output_movements
+					game_state.output_sectors
+					game_state.output_descriptions
+					game_state.output_deaths
+					game_state.output_galaxy
 				end
 			end
 		end

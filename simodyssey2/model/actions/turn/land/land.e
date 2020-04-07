@@ -11,8 +11,8 @@ create
 	make
 
 feature -- attributes
-	model: ETF_MODEL
-	model_access: ETF_MODEL_ACCESS
+	game_state: GAME_STATE
+	game_state_access: GAME_STATE_ACCESS
 	entity_ids: ENTITY_IDS
 	entity_ids_access: ENTITY_IDS_ACCESS
 
@@ -20,7 +20,7 @@ feature -- attributes
 feature -- constructor
 	make
 		do
-			model := model_access.m
+			game_state := game_state_access.gs
 			entity_ids := entity_ids_access.entity_ids
 		end
 
@@ -38,7 +38,7 @@ feature -- execute
 
 
 		do
-		model := model_access.m
+		game_state := game_state_access.gs
 		entity_ids := entity_ids_access.entity_ids
 		visited := false
 		found_life := false
@@ -50,49 +50,49 @@ feature -- execute
 		end
 
 		if attached{EXPLORER_ENT} explorer as exp then
-			if model.mode.is_equal ("none") then
-					model.update_mini_state
-					model.error_state
-					model.states_msg_append ("%N")
-					model.states_msg_append ("  ")
-					model.states_msg_append ("Negative on that request:no mission in progress.")
-					model.output_states
+			if game_state.mode.is_equal ("none") then
+					game_state.update_mini_state
+					game_state.error_state
+					game_state.states_msg_append ("%N")
+					game_state.states_msg_append ("  ")
+					game_state.states_msg_append ("Negative on that request:no mission in progress.")
+					game_state.output_states
 			else
-			sector := model.galaxy.grid[exp.position.row,exp.position.col]
+			sector := game_state.galaxy.grid[exp.position.row,exp.position.col]
 			if exp.is_landed then
 
-						model.update_mini_state
-						model.error_state
-						model.states_msg_append ("%N")
-						model.states_msg_append ("  ")
-						model.states_msg_append ("Negative on that request:you are currently landed at Sector:")
-						model.states_msg_append (exp.position.row.out)
-						model.states_msg_append (":")
-						model.states_msg_append (exp.position.col.out)
-						model.output_states
+						game_state.update_mini_state
+						game_state.error_state
+						game_state.states_msg_append ("%N")
+						game_state.states_msg_append ("  ")
+						game_state.states_msg_append ("Negative on that request:you are currently landed at Sector:")
+						game_state.states_msg_append (exp.position.row.out)
+						game_state.states_msg_append (":")
+						game_state.states_msg_append (exp.position.col.out)
+						game_state.output_states
 
 			elseif not sector.has_yd then
-							model.update_mini_state
-							model.error_state
-							model.states_msg_append ("%N")
-							model.states_msg_append ("  ")
-							model.states_msg_append ("Negative on that request:no yellow dwarf at Sector:")
-							model.states_msg_append (exp.position.row.out)
-							model.states_msg_append (":")
-							model.states_msg_append (exp.position.col.out)
-							model.output_states
+							game_state.update_mini_state
+							game_state.error_state
+							game_state.states_msg_append ("%N")
+							game_state.states_msg_append ("  ")
+							game_state.states_msg_append ("Negative on that request:no yellow dwarf at Sector:")
+							game_state.states_msg_append (exp.position.row.out)
+							game_state.states_msg_append (":")
+							game_state.states_msg_append (exp.position.col.out)
+							game_state.output_states
 
 
 			elseif not sector.has_pl then
-				model.update_mini_state
-							model.error_state
-							model.states_msg_append ("%N")
-							model.states_msg_append ("  ")
-							model.states_msg_append ("Negative on that request:no planet at Sector:")
-							model.states_msg_append (exp.position.row.out)
-							model.states_msg_append (":")
-							model.states_msg_append (exp.position.col.out)
-							model.output_states
+				game_state.update_mini_state
+							game_state.error_state
+							game_state.states_msg_append ("%N")
+							game_state.states_msg_append ("  ")
+							game_state.states_msg_append ("Negative on that request:no planet at Sector:")
+							game_state.states_msg_append (exp.position.row.out)
+							game_state.states_msg_append (":")
+							game_state.states_msg_append (exp.position.col.out)
+							game_state.output_states
 			else
 
 
@@ -121,32 +121,32 @@ end
 
 			if found_life then
 							explorer.land -- added to make the turn easier for me to implement
-							model.update_state
-							model.states_msg_append ("%N")
-							model.states_msg_append ("  ")
-							model.states_msg_append ("Tranquility base here - we've got a life!")
-							model.gameover
-						--	model.output_states
+							game_state.update_state
+							game_state.states_msg_append ("%N")
+							game_state.states_msg_append ("  ")
+							game_state.states_msg_append ("Tranquility base here - we've got a life!")
+							game_state.gameover
+						--	game_state.output_states
 			elseif visited then
-							model.update_mini_state
-							model.error_state
-							model.states_msg_append ("%N")
-							model.states_msg_append ("  ")
-							model.states_msg_append ("Negative on that request:no unvisited planets at Sector:")
-							model.states_msg_append (exp.position.row.out)
-							model.states_msg_append (":")
-							model.states_msg_append (exp.position.col.out)
-							model.output_states
+							game_state.update_mini_state
+							game_state.error_state
+							game_state.states_msg_append ("%N")
+							game_state.states_msg_append ("  ")
+							game_state.states_msg_append ("Negative on that request:no unvisited planets at Sector:")
+							game_state.states_msg_append (exp.position.row.out)
+							game_state.states_msg_append (":")
+							game_state.states_msg_append (exp.position.col.out)
+							game_state.output_states
 			else
 							explorer.land
-							model.update_state
-							model.states_msg_append ("%N")
-							model.states_msg_append ("  ")
-							model.states_msg_append ("Explorer found no life as we know it at Sector:")
-							model.states_msg_append (exp.position.row.out)
-							model.states_msg_append (":")
-							model.states_msg_append (exp.position.col.out)
-						--	model.output_states
+							game_state.update_state
+							game_state.states_msg_append ("%N")
+							game_state.states_msg_append ("  ")
+							game_state.states_msg_append ("Explorer found no life as we know it at Sector:")
+							game_state.states_msg_append (exp.position.row.out)
+							game_state.states_msg_append (":")
+							game_state.states_msg_append (exp.position.col.out)
+						--	game_state.output_states
 			end
 			end
 			end

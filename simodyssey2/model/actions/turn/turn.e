@@ -10,9 +10,9 @@ class
 create
 	make
 
-feature -- model
-	model: ETF_MODEL
-	model_access: ETF_MODEL_ACCESS
+feature -- game_state
+	game_state: GAME_STATE
+	game_state_access: GAME_STATE_ACCESS
 	entity_ids: ENTITY_IDS
 	entity_ids_access: ENTITY_IDS_ACCESS
 	gen: RANDOM_GENERATOR_ACCESS
@@ -24,10 +24,10 @@ feature -- model
 	pass_command: PASS
 	wormhole_command: WORMHOLE
 
-feature -- constructor -- ALWAYS MAKE SURE THE MODEL IS ATTACHED
+feature -- constructor -- ALWAYS MAKE SURE THE game_state IS ATTACHED
 	make
 		do
-			model := model_access.m
+			game_state := game_state_access.gs
 			entity_ids := entity_ids_access.entity_ids
 			create land_command.make
 			create liftoff_command.make
@@ -37,7 +37,7 @@ feature -- constructor -- ALWAYS MAKE SURE THE MODEL IS ATTACHED
 
 			new_sector_full := false
 		ensure
-			attached_model: attached model
+			attached_game_state: attached game_state
 		end
 
 feature -- execute
@@ -51,29 +51,29 @@ feature -- execute
 			num: INTEGER
 			movable_entity_is_dead: BOOLEAN
 		do
-			-- must attach the model here... idk why but the one in constructor is broken
-			model := model_access.m
+			-- must attach the game_state here... idk why but the one in constructor is broken
+			game_state := game_state_access.gs
 			entity_ids := entity_ids_access.entity_ids
 
 			-- next turn state
-			model.new_turn_state
+			game_state.new_turn_state
 
 			-- attach explorer with entity alphabet
 			explorer_entity_alphabet := entity_ids.get_entity_alphabet (0)
 			-- attach the movable entities
 			movable_entities_alphabet := entity_ids.get_movable_entities
 --			-- attach current sector
---			sector := model.galaxy.grid[]
+--			sector := game_state.galaxy.grid[]
 
 			--logic
 			act(action)
 			-- if error exists, then skip entire if block
 -------------- print the outputs at the end of the if statement if no errors -------------
-			if model.ok_or_error.is_equal ("ok") then
+			if game_state.ok_or_error.is_equal ("ok") then
 				-- perform check(entity), etc
 				check_entity (explorer_entity_alphabet)			--
 				if attached {EXPLORER_ENT} explorer_entity_alphabet.entity as explorer then
-					if not (model.is_gameover and explorer.is_landed) then
+					if not (game_state.is_gameover and explorer.is_landed) then
 						across movable_entities_alphabet as entity_alphabet loop
 							-- if entity dies,
 							-- remove the entity from the board
@@ -92,7 +92,7 @@ feature -- execute
 							if not movable_entity_is_dead then
 								-- attach current sector with the current movable entity
 								if attached {ENTITY} entity_alphabet.item.entity as entity then
-									sector := model.galaxy.grid[entity.position.row, entity.position.col]
+									sector := game_state.galaxy.grid[entity.position.row, entity.position.col]
 
 									if attached {PLANET_ENT} entity_alphabet.item.entity as planet then
 										turns_left := planet.turns_left
@@ -161,41 +161,41 @@ feature -- execute
 						end
 					end
 					-- display the outputs after the turn
-					model.output_states
-					if not (model.is_gameover and explorer.is_landed) then
-						model.output_movements
-						if model.mode.is_equal ("test") then
-							model.output_sectors
-							model.output_descriptions
-							model.output_deaths
+					game_state.output_states
+					if not (game_state.is_gameover and explorer.is_landed) then
+						game_state.output_movements
+						if game_state.mode.is_equal ("test") then
+							game_state.output_sectors
+							game_state.output_descriptions
+							game_state.output_deaths
 						end
-						model.output_galaxy
+						game_state.output_galaxy
 					end
 
 					-- entering this if statement ends the game
-					if model.is_gameover then
-						model.not_in_game_mode
-						model.not_gameover
+					if game_state.is_gameover then
+						game_state.not_in_game_mode
+						game_state.not_gameover
 						if explorer.is_dead then
-							model.output_last_message
+							game_state.output_last_message
 						end
 					end
 				end
 
 --				-- display the outputs after the turn
---				model.output_states
---				model.output_movements
---				if model.mode.is_equal ("test") then
---					model.output_sectors
---					model.output_descriptions
---					model.output_deaths
+--				game_state.output_states
+--				game_state.output_movements
+--				if game_state.mode.is_equal ("test") then
+--					game_state.output_sectors
+--					game_state.output_descriptions
+--					game_state.output_deaths
 --				end
---				model.output_galaxy
+--				game_state.output_galaxy
 
 --				-- entering this if statement ends the game
---				if model.is_gameover then
---					model.not_in_game_mode
---					model.not_gameover
+--				if game_state.is_gameover then
+--					game_state.not_in_game_mode
+--					game_state.not_gameover
 --				end
 			end
 		end
@@ -251,23 +251,23 @@ feature -- movement of other movable entities
 			selected_dir := du.num_dir (gen.rchoose (1, 8))
 			old_pos := ent_alpha.entity.position
 			new_pos := mu.transform (ent_alpha.entity.position, selected_dir)
-			old_sector := model.galaxy.grid[old_pos.row, old_pos.col]
-			new_sector := model.galaxy.grid[new_pos.row, new_pos.col]
+			old_sector := game_state.galaxy.grid[old_pos.row, old_pos.col]
+			new_sector := game_state.galaxy.grid[new_pos.row, new_pos.col]
 
-			model.an_entity_moved
-			model.movements_msg_append ("%N")
-			model.movements_msg_append ("    ")
-			model.movements_msg_append ("[")
-			model.movements_msg_append (ent_alpha.id.out)
-			model.movements_msg_append (",")
-			model.movements_msg_append (ent_alpha.item.out)
-			model.movements_msg_append ("]")
-			model.movements_msg_append (":")
-			model.movements_msg_append ("[")
-			model.movements_msg_append (old_pos.row.out)
-			model.movements_msg_append (",")
-			model.movements_msg_append (old_pos.col.out)
-			model.movements_msg_append (",")
+			game_state.an_entity_moved
+			game_state.movements_msg_append ("%N")
+			game_state.movements_msg_append ("    ")
+			game_state.movements_msg_append ("[")
+			game_state.movements_msg_append (ent_alpha.id.out)
+			game_state.movements_msg_append (",")
+			game_state.movements_msg_append (ent_alpha.item.out)
+			game_state.movements_msg_append ("]")
+			game_state.movements_msg_append (":")
+			game_state.movements_msg_append ("[")
+			game_state.movements_msg_append (old_pos.row.out)
+			game_state.movements_msg_append (",")
+			game_state.movements_msg_append (old_pos.col.out)
+			game_state.movements_msg_append (",")
 			from
 				quadrant := 1
 				loop_counter := 1
@@ -283,19 +283,19 @@ feature -- movement of other movable entities
 				end
 				loop_counter := loop_counter + 1
 			end
-			model.movements_msg_append (quadrant.out)
-			model.movements_msg_append ("]")
+			game_state.movements_msg_append (quadrant.out)
+			game_state.movements_msg_append ("]")
 
 			if not new_sector.is_full then
 				old_sector.delete (ent_alpha)
 				new_sector.put (ent_alpha, new_pos)
 
-				model.movements_msg_append ("->")
-				model.movements_msg_append ("[")
-				model.movements_msg_append (new_pos.row.out)
-				model.movements_msg_append (",")
-				model.movements_msg_append (new_pos.col.out)
-				model.movements_msg_append (",")
+				game_state.movements_msg_append ("->")
+				game_state.movements_msg_append ("[")
+				game_state.movements_msg_append (new_pos.row.out)
+				game_state.movements_msg_append (",")
+				game_state.movements_msg_append (new_pos.col.out)
+				game_state.movements_msg_append (",")
 				from
 					quadrant := 1
 					loop_counter := 1
@@ -311,8 +311,8 @@ feature -- movement of other movable entities
 					end
 					loop_counter := loop_counter + 1
 				end
-				model.movements_msg_append (quadrant.out)
-				model.movements_msg_append ("]")
+				game_state.movements_msg_append (quadrant.out)
+				game_state.movements_msg_append ("]")
 			else
 				if attached {FUELED_ENT} ent_alpha.entity then
 					new_sector_full := true
@@ -338,7 +338,7 @@ feature -- reproduce of fueled entities
 			loop_counter: INTEGER
 			found: BOOLEAN
 		do
-			sector := model.galaxy.grid[ent_alpha.entity.position.row, ent_alpha.entity.position.col]
+			sector := game_state.galaxy.grid[ent_alpha.entity.position.row, ent_alpha.entity.position.col]
 			if attached {REPRODUCIBLE_ENT} ent_alpha.entity as reproducible then
 				if not sector.is_full and (reproducible.actions_left = 0) then
 					if attached {BENIGN_ENT} reproducible then
@@ -356,17 +356,17 @@ feature -- reproduce of fueled entities
 						reproducible.reset_actions
 
 						-- outputs
-						model.movements_msg_append ("%N")
-						model.movements_msg_append ("      ")
-						model.movements_msg_append ("reproduced [")
-						model.movements_msg_append (attached_dup_ent_alpha.id.out)
-						model.movements_msg_append (",")
-						model.movements_msg_append (attached_dup_ent_alpha.item.out)
-						model.movements_msg_append ("] at [")
-						model.movements_msg_append (attached_dup_ent_alpha.entity.position.row.out)
-						model.movements_msg_append (",")
-						model.movements_msg_append (attached_dup_ent_alpha.entity.position.col.out)
-						model.movements_msg_append (",")
+						game_state.movements_msg_append ("%N")
+						game_state.movements_msg_append ("      ")
+						game_state.movements_msg_append ("reproduced [")
+						game_state.movements_msg_append (attached_dup_ent_alpha.id.out)
+						game_state.movements_msg_append (",")
+						game_state.movements_msg_append (attached_dup_ent_alpha.item.out)
+						game_state.movements_msg_append ("] at [")
+						game_state.movements_msg_append (attached_dup_ent_alpha.entity.position.row.out)
+						game_state.movements_msg_append (",")
+						game_state.movements_msg_append (attached_dup_ent_alpha.entity.position.col.out)
+						game_state.movements_msg_append (",")
 						from
 							quadrant := 1
 							loop_counter := 1
@@ -382,8 +382,8 @@ feature -- reproduce of fueled entities
 							end
 							loop_counter := loop_counter + 1
 						end
-						model.movements_msg_append (quadrant.out)
-						model.movements_msg_append ("]")
+						game_state.movements_msg_append (quadrant.out)
+						game_state.movements_msg_append ("]")
 					end
 				else
 					if not (reproducible.actions_left = 0) then
@@ -403,7 +403,7 @@ feature -- behave
 			num: INTEGER
 		do
 			create custom_string.make_empty
-			sector := model.galaxy.grid[ent_alpha.entity.position.row, ent_alpha.entity.position.col]
+			sector := game_state.galaxy.grid[ent_alpha.entity.position.row, ent_alpha.entity.position.col]
 
 			if attached {ASTEROID_ENT} ent_alpha.entity  as asteroid_ent then
 				across entity_ids.get_entities_at (ent_alpha.entity.position) as possible_void_ent_alpha loop
@@ -411,7 +411,7 @@ feature -- behave
 						if attached {FUELED_ENT} ent_alp.entity as fueled_ent then
 							-- entity dies
 							fueled_ent.died
-							model.an_entity_died
+							game_state.an_entity_died
 							create custom_string.make_empty
 
 							if attached {BENIGN_ENT} ent_alp.entity then
@@ -438,7 +438,7 @@ feature -- behave
 						if attached {EXPLORER_ENT} ent_alp.entity as explorer_ent then
 							if not explorer_ent.is_landed then
 								explorer_ent.died
-								model.an_entity_died
+								game_state.an_entity_died
 
 								custom_string.append ("Explorer ")
 								custom_string.append ("got destroyed by asteroid (id: ")
@@ -454,7 +454,7 @@ feature -- behave
 								sector.delete (ent_alp)
 
 								-- game is then over
-								model.gameover
+								game_state.gameover
 							end
 						end
 					end
@@ -468,7 +468,7 @@ feature -- behave
 							if attached {ASTEROID_ENT} ea.entity as asteroid then
 								janitaur_ent.load_janitaur
 								asteroid.died
-								model.an_entity_died
+								game_state.an_entity_died
 								create custom_string.make_empty
 
 								custom_string.append ("Asteroid ")
@@ -498,7 +498,7 @@ feature -- behave
 					if attached {ENTITY_ALPHABET} ent_alp.item as ea then
 						if attached {MALEVOLENT_ENT} ea.entity as malevolent then
 							malevolent.died
-							model.an_entity_died
+							game_state.an_entity_died
 							create custom_string.make_empty
 
 							custom_string.append ("Malevolent ")
@@ -531,7 +531,7 @@ feature -- behave
 									explorer.decrement_life_by (1)
 									if explorer.life = 0 then
 										explorer.died
-										model.an_entity_died
+										game_state.an_entity_died
 										create custom_string.make_empty
 
 										custom_string.append ("Explorer got lost in space - out of life support at Sector:")
@@ -539,14 +539,14 @@ feature -- behave
 										custom_string.append (":")
 										custom_string.append (ent_alpha.entity.position.col.out)
 
-										model.last_msg_append (custom_string)
-										model.states_msg_append (model.last_message)
+										game_state.last_msg_append (custom_string)
+										game_state.states_msg_append (game_state.last_message)
 
 										deaths_append_deaths (ea, custom_string)
 
 										sector.delete (ea)
 
-										model.gameover
+										game_state.gameover
 									end
 									movements_append_deaths (ea, sector)
 								end
@@ -585,7 +585,7 @@ feature {NONE} -- check_entity
 			-- current sector
 			if attached {ENTITY} ent_alpha.entity as ent then
 				-- could be somthing wrong OVER HERE
-				sector := model.galaxy.grid[ent.position.row, ent.position.col]
+				sector := game_state.galaxy.grid[ent.position.row, ent.position.col]
 
 				-- includes explorer, benign, malevolent, janitaur
 
@@ -632,7 +632,7 @@ feature {NONE} -- check_entity
 						-- deletes the entity_alphabet from the board and entity_ids
 --						sector.delete (ent_alpha)
 
-						model.an_entity_died
+						game_state.an_entity_died
 						current_entity_died := true
 
 						variable_deaths_msg.append ("%N")
@@ -663,14 +663,14 @@ feature {NONE} -- check_entity
 							variable_deaths_msg.append (":")
 							variable_deaths_msg.append (ent.position.col.out)
 
-							model.last_msg_append ("Explorer got lost in space - out of fuel at Sector:")
-							model.last_msg_append (ent.position.row.out)
-							model.last_msg_append (":")
-							model.last_msg_append (ent.position.col.out)
-							model.states_msg_append (model.last_message)
+							game_state.last_msg_append ("Explorer got lost in space - out of fuel at Sector:")
+							game_state.last_msg_append (ent.position.row.out)
+							game_state.last_msg_append (":")
+							game_state.last_msg_append (ent.position.col.out)
+							game_state.states_msg_append (game_state.last_message)
 
 							-- make it so that the game has to end
-							model.gameover
+							game_state.gameover
 
 						elseif attached {BENIGN_ENT} fueled_ent as benign then
 							benign.died
@@ -743,7 +743,7 @@ feature {NONE} -- check_entity
 
 --					sector.delete (ent_alpha)
 
-					model.an_entity_died
+					game_state.an_entity_died
 					current_entity_died := true
 
 					variable_deaths_msg.append ("%N")
@@ -771,11 +771,11 @@ feature {NONE} -- check_entity
 						variable_deaths_msg.append ("      ")
 						variable_deaths_msg.append ("Explorer got devoured by blackhole (id: -1) at Sector:3:3")
 
-						model.last_msg_append ("Explorer got lost in space - out of fuel at Sector:3:3")
-						model.states_msg_append (model.last_message)
+						game_state.last_msg_append ("Explorer got lost in space - out of fuel at Sector:3:3")
+						game_state.states_msg_append (game_state.last_message)
 
 						-- make it so that the game has to end
-						model.gameover
+						game_state.gameover
 
 					elseif attached {BENIGN_ENT} ent as benign then
 						benign.died
@@ -852,7 +852,7 @@ feature {NONE} -- check_entity
 -- SOLVED: delete the entity at the end
 -- ==========================================================================================
 					sector.delete (ent_alpha)
-					model.deaths_msg_append (variable_deaths_msg)
+					game_state.deaths_msg_append (variable_deaths_msg)
 				end
 
 			end
@@ -869,24 +869,24 @@ feature -- the outputs for the deaths of things...
 			loop_counter: INTEGER
 			found: BOOLEAN
 		do
-			model.movements_msg_append ("%N")
-			model.movements_msg_append ("      ")
+			game_state.movements_msg_append ("%N")
+			game_state.movements_msg_append ("      ")
 			if attached {EXPLORER_ENT} ent_alpha.entity then
-				model.movements_msg_append ("attacked ")
+				game_state.movements_msg_append ("attacked ")
 			else
-				model.movements_msg_append ("destroyed ")
+				game_state.movements_msg_append ("destroyed ")
 			end
-			model.movements_msg_append ("[")
-			model.movements_msg_append (ent_alpha.id.out)
-			model.movements_msg_append (",")
-			model.movements_msg_append (ent_alpha.item.out)
-			model.movements_msg_append ("]")
-			model.movements_msg_append (" at ")
-			model.movements_msg_append ("[")
-			model.movements_msg_append (ent_alpha.entity.position.row.out)
-			model.movements_msg_append (",")
-			model.movements_msg_append (ent_alpha.entity.position.col.out)
-			model.movements_msg_append (",")
+			game_state.movements_msg_append ("[")
+			game_state.movements_msg_append (ent_alpha.id.out)
+			game_state.movements_msg_append (",")
+			game_state.movements_msg_append (ent_alpha.item.out)
+			game_state.movements_msg_append ("]")
+			game_state.movements_msg_append (" at ")
+			game_state.movements_msg_append ("[")
+			game_state.movements_msg_append (ent_alpha.entity.position.row.out)
+			game_state.movements_msg_append (",")
+			game_state.movements_msg_append (ent_alpha.entity.position.col.out)
+			game_state.movements_msg_append (",")
 			from
 				quadrant := 1
 				loop_counter := 1
@@ -902,100 +902,100 @@ feature -- the outputs for the deaths of things...
 				end
 				loop_counter := loop_counter + 1
 			end
-			model.movements_msg_append (quadrant.out)
-			model.movements_msg_append ("]")
+			game_state.movements_msg_append (quadrant.out)
+			game_state.movements_msg_append ("]")
 		end
 
 
 	deaths_append_deaths (ent_alpha: ENTITY_ALPHABET; custom_string: STRING)
 		do
-			model.deaths_msg_append ("%N")
-			model.deaths_msg_append ("    ")
-			model.deaths_msg_append ("[")
-			model.deaths_msg_append (ent_alpha.id.out)
-			model.deaths_msg_append (",")
-			model.deaths_msg_append (ent_alpha.item.out)
-			model.deaths_msg_append ("]")
-			model.deaths_msg_append ("->")
+			game_state.deaths_msg_append ("%N")
+			game_state.deaths_msg_append ("    ")
+			game_state.deaths_msg_append ("[")
+			game_state.deaths_msg_append (ent_alpha.id.out)
+			game_state.deaths_msg_append (",")
+			game_state.deaths_msg_append (ent_alpha.item.out)
+			game_state.deaths_msg_append ("]")
+			game_state.deaths_msg_append ("->")
 
 			if attached {EXPLORER_ENT} ent_alpha.entity as explorer then
-				model.deaths_msg_append ("fuel:")
-				model.deaths_msg_append (explorer.fuel.out)
-				model.deaths_msg_append ("/3")
-				model.deaths_msg_append (", ")
-				model.deaths_msg_append ("life:")
-				model.deaths_msg_append (explorer.life.out)
-				model.deaths_msg_append ("/3")
-				model.deaths_msg_append (", ")
-				model.deaths_msg_append ("landed?:")
-				model.deaths_msg_append (explorer.is_landed.out.at (1).out)
-				model.deaths_msg_append (",")
-				model.deaths_msg_append ("%N")
-				model.deaths_msg_append ("      ")
-				model.deaths_msg_append (custom_string)
+				game_state.deaths_msg_append ("fuel:")
+				game_state.deaths_msg_append (explorer.fuel.out)
+				game_state.deaths_msg_append ("/3")
+				game_state.deaths_msg_append (", ")
+				game_state.deaths_msg_append ("life:")
+				game_state.deaths_msg_append (explorer.life.out)
+				game_state.deaths_msg_append ("/3")
+				game_state.deaths_msg_append (", ")
+				game_state.deaths_msg_append ("landed?:")
+				game_state.deaths_msg_append (explorer.is_landed.out.at (1).out)
+				game_state.deaths_msg_append (",")
+				game_state.deaths_msg_append ("%N")
+				game_state.deaths_msg_append ("      ")
+				game_state.deaths_msg_append (custom_string)
 
 			elseif attached {BENIGN_ENT} ent_alpha.entity as benign then
-				model.deaths_msg_append ("fuel:")
-				model.deaths_msg_append (benign.fuel.out)
-				model.deaths_msg_append ("/3")
-				model.deaths_msg_append (", ")
-				model.deaths_msg_append ("actions_left_until_reproduction:")
-				model.deaths_msg_append (benign.actions_left.out)
-				model.deaths_msg_append ("/1")
-				model.deaths_msg_append (", ")
-				model.deaths_msg_append ("turns_left:N/A,")
-				model.deaths_msg_append ("%N")
-				model.deaths_msg_append ("      ")
-				model.deaths_msg_append (custom_string)
+				game_state.deaths_msg_append ("fuel:")
+				game_state.deaths_msg_append (benign.fuel.out)
+				game_state.deaths_msg_append ("/3")
+				game_state.deaths_msg_append (", ")
+				game_state.deaths_msg_append ("actions_left_until_reproduction:")
+				game_state.deaths_msg_append (benign.actions_left.out)
+				game_state.deaths_msg_append ("/1")
+				game_state.deaths_msg_append (", ")
+				game_state.deaths_msg_append ("turns_left:N/A,")
+				game_state.deaths_msg_append ("%N")
+				game_state.deaths_msg_append ("      ")
+				game_state.deaths_msg_append (custom_string)
 			elseif attached {MALEVOLENT_ENT} ent_alpha.entity as malevolent then
-				model.deaths_msg_append ("fuel:")
-				model.deaths_msg_append (malevolent.fuel.out)
-				model.deaths_msg_append ("/3")
-				model.deaths_msg_append (", ")
-				model.deaths_msg_append ("actions_left_until_reproduction:")
-				model.deaths_msg_append (malevolent.actions_left.out)
-				model.deaths_msg_append ("/1")
-				model.deaths_msg_append (", ")
-				model.deaths_msg_append ("turns_left:N/A,")
-				model.deaths_msg_append ("%N")
-				model.deaths_msg_append ("      ")
-				model.deaths_msg_append (custom_string)
+				game_state.deaths_msg_append ("fuel:")
+				game_state.deaths_msg_append (malevolent.fuel.out)
+				game_state.deaths_msg_append ("/3")
+				game_state.deaths_msg_append (", ")
+				game_state.deaths_msg_append ("actions_left_until_reproduction:")
+				game_state.deaths_msg_append (malevolent.actions_left.out)
+				game_state.deaths_msg_append ("/1")
+				game_state.deaths_msg_append (", ")
+				game_state.deaths_msg_append ("turns_left:N/A,")
+				game_state.deaths_msg_append ("%N")
+				game_state.deaths_msg_append ("      ")
+				game_state.deaths_msg_append (custom_string)
 			elseif attached {JANITAUR_ENT} ent_alpha.entity as janitaur then
-				model.deaths_msg_append ("fuel:")
-				model.deaths_msg_append (janitaur.fuel.out)
-				model.deaths_msg_append ("/5")
-				model.deaths_msg_append (", ")
-				model.deaths_msg_append ("load:")
-				model.deaths_msg_append (janitaur.load_level.out)
-				model.deaths_msg_append ("/2")
-				model.deaths_msg_append (", ")
-				model.deaths_msg_append ("actions_left_until_reproduction:")
-				model.deaths_msg_append (janitaur.actions_left.out)
-				model.deaths_msg_append ("/2")
-				model.deaths_msg_append (", ")
-				model.deaths_msg_append ("turns_left:N/A,")
-				model.deaths_msg_append ("%N")
-				model.deaths_msg_append ("      ")
-				model.deaths_msg_append (custom_string)
+				game_state.deaths_msg_append ("fuel:")
+				game_state.deaths_msg_append (janitaur.fuel.out)
+				game_state.deaths_msg_append ("/5")
+				game_state.deaths_msg_append (", ")
+				game_state.deaths_msg_append ("load:")
+				game_state.deaths_msg_append (janitaur.load_level.out)
+				game_state.deaths_msg_append ("/2")
+				game_state.deaths_msg_append (", ")
+				game_state.deaths_msg_append ("actions_left_until_reproduction:")
+				game_state.deaths_msg_append (janitaur.actions_left.out)
+				game_state.deaths_msg_append ("/2")
+				game_state.deaths_msg_append (", ")
+				game_state.deaths_msg_append ("turns_left:N/A,")
+				game_state.deaths_msg_append ("%N")
+				game_state.deaths_msg_append ("      ")
+				game_state.deaths_msg_append (custom_string)
 			elseif attached {PLANET_ENT} ent_alpha.entity as planet then
-				model.deaths_msg_append ("attached?:")
-				model.deaths_msg_append (planet.attached_to_star.out.at (1).out)
-				model.deaths_msg_append (", ")
-				model.deaths_msg_append ("support_life?:")
-				model.deaths_msg_append (planet.supports_life.out.at (1).out)
-				model.deaths_msg_append (", ")
-				model.deaths_msg_append ("visited?:")
-				model.deaths_msg_append (planet.visited.out.at (1).out)
-				model.deaths_msg_append (", ")
-				model.deaths_msg_append ("turns_left:N/A,")
-				model.deaths_msg_append ("%N")
-				model.deaths_msg_append ("      ")
-				model.deaths_msg_append (custom_string)
+				game_state.deaths_msg_append ("attached?:")
+				game_state.deaths_msg_append (planet.attached_to_star.out.at (1).out)
+				game_state.deaths_msg_append (", ")
+				game_state.deaths_msg_append ("support_life?:")
+				game_state.deaths_msg_append (planet.supports_life.out.at (1).out)
+				game_state.deaths_msg_append (", ")
+				game_state.deaths_msg_append ("visited?:")
+				game_state.deaths_msg_append (planet.visited.out.at (1).out)
+				game_state.deaths_msg_append (", ")
+				game_state.deaths_msg_append ("turns_left:N/A,")
+				game_state.deaths_msg_append ("%N")
+				game_state.deaths_msg_append ("      ")
+				game_state.deaths_msg_append (custom_string)
 			elseif attached {ASTEROID_ENT} ent_alpha.entity as asteroid then
-				model.deaths_msg_append ("turns_left:N/A,")
-				model.deaths_msg_append ("%N")
-				model.deaths_msg_append ("      ")
-				model.deaths_msg_append (custom_string)
+				game_state.deaths_msg_append ("turns_left:N/A,")
+				game_state.deaths_msg_append ("%N")
+				game_state.deaths_msg_append ("      ")
+				game_state.deaths_msg_append (custom_string)
 
 			end
 		end

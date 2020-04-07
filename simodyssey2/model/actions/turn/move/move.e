@@ -11,9 +11,9 @@ create
 	make
 
 feature  -- attributes
-	-- model
-	model: ETF_MODEL
-	model_access: ETF_MODEL_ACCESS
+	-- game_state
+	game_state: GAME_STATE
+	game_state_access: GAME_STATE_ACCESS
 
 	-- entity_ids
 	entity_ids: ENTITY_IDS
@@ -25,7 +25,7 @@ feature  -- attributes
 feature -- constructor
 	make
 		do
-			model := model_access.m
+			game_state := game_state_access.gs
 			entity_ids := entity_ids_access.entity_ids
 			create direction.default_create
 		end
@@ -55,8 +55,8 @@ feature -- execute
 			found: BOOLEAN
 			loop_counter: INTEGER
 		do
-			-- must attach model in whichever function it was used
-			model := model_access.m
+			-- must attach game_state in whichever function it was used
+			game_state := game_state_access.gs
 			entity_ids := entity_ids_access.entity_ids
 
 			-- set the explorer
@@ -67,57 +67,57 @@ feature -- execute
 
 			if attached {EXPLORER_ENT} explorer as exp then
 				-- check if in play or test mode -- error check
-				if model.mode.is_equal ("none") then
-					model.update_mini_state
-					model.error_state
-					model.states_msg_append ("%N")
-					model.states_msg_append ("  ")
-					model.states_msg_append ("Negative on that request:no mission in progress.")
-					model.output_states
+				if game_state.mode.is_equal ("none") then
+					game_state.update_mini_state
+					game_state.error_state
+					game_state.states_msg_append ("%N")
+					game_state.states_msg_append ("  ")
+					game_state.states_msg_append ("Negative on that request:no mission in progress.")
+					game_state.output_states
 				else
 					create mu.make
 					new_pos := mu.transform (exp.position, direction)
-					old_sector := model.galaxy.grid[exp.position.row, exp.position.col]
-					new_sector := model.galaxy.grid[new_pos.row, new_pos.col]
+					old_sector := game_state.galaxy.grid[exp.position.row, exp.position.col]
+					new_sector := game_state.galaxy.grid[new_pos.row, new_pos.col]
 
 					-- check if the explorer is currently landed -- error check
 					if exp.is_landed then
-						model.update_mini_state
-						model.error_state
-						model.states_msg_append ("%N")
-						model.states_msg_append ("  ")
-						model.states_msg_append ("Negative on that request:you are currently landed at Sector:")
-						model.states_msg_append (exp.position.row.out)
-						model.states_msg_append (":")
-						model.states_msg_append (exp.position.col.out)
-						model.output_states
+						game_state.update_mini_state
+						game_state.error_state
+						game_state.states_msg_append ("%N")
+						game_state.states_msg_append ("  ")
+						game_state.states_msg_append ("Negative on that request:you are currently landed at Sector:")
+						game_state.states_msg_append (exp.position.row.out)
+						game_state.states_msg_append (":")
+						game_state.states_msg_append (exp.position.col.out)
+						game_state.output_states
 					else
 						-- check if the sector is full -- error check
 						if new_sector.is_full then
-							model.update_mini_state
-							model.error_state
-							model.states_msg_append ("%N")
-							model.states_msg_append ("  ")
-							model.states_msg_append ("Cannot transfer to new location as it is full.")
-							model.output_states
+							game_state.update_mini_state
+							game_state.error_state
+							game_state.states_msg_append ("%N")
+							game_state.states_msg_append ("  ")
+							game_state.states_msg_append ("Cannot transfer to new location as it is full.")
+							game_state.output_states
 						else
 							-- remember to add to the movements_msg
-							model.update_state
-							model.ok_state
-							model.an_entity_moved
+							game_state.update_state
+							game_state.ok_state
+							game_state.an_entity_moved
 
-							model.movements_msg_append ("%N")
-							model.movements_msg_append ("    ")
-							model.movements_msg_append ("[")
-							model.movements_msg_append (explorer_entity_alphabet.id.out)
-							model.movements_msg_append (",")
-							model.movements_msg_append (explorer_entity_alphabet.item.out)
-							model.movements_msg_append ("]:")
-							model.movements_msg_append ("[")
-							model.movements_msg_append (exp.position.row.out)
-							model.movements_msg_append (",")
-							model.movements_msg_append (exp.position.col.out)
-							model.movements_msg_append (",")
+							game_state.movements_msg_append ("%N")
+							game_state.movements_msg_append ("    ")
+							game_state.movements_msg_append ("[")
+							game_state.movements_msg_append (explorer_entity_alphabet.id.out)
+							game_state.movements_msg_append (",")
+							game_state.movements_msg_append (explorer_entity_alphabet.item.out)
+							game_state.movements_msg_append ("]:")
+							game_state.movements_msg_append ("[")
+							game_state.movements_msg_append (exp.position.row.out)
+							game_state.movements_msg_append (",")
+							game_state.movements_msg_append (exp.position.col.out)
+							game_state.movements_msg_append (",")
 							from
 								quadrant := 1
 								loop_counter := 1
@@ -133,18 +133,18 @@ feature -- execute
 								end
 								loop_counter := loop_counter + 1
 							end
-							model.movements_msg_append (quadrant.out)
-							model.movements_msg_append ("]")
+							game_state.movements_msg_append (quadrant.out)
+							game_state.movements_msg_append ("]")
 
 							old_sector.delete (explorer_entity_alphabet)
 							new_sector.put (explorer_entity_alphabet, new_pos)
 
-							model.movements_msg_append ("->")
-							model.movements_msg_append ("[")
-							model.movements_msg_append (exp.position.row.out)
-							model.movements_msg_append (",")
-							model.movements_msg_append (exp.position.col.out)
-							model.movements_msg_append (",")
+							game_state.movements_msg_append ("->")
+							game_state.movements_msg_append ("[")
+							game_state.movements_msg_append (exp.position.row.out)
+							game_state.movements_msg_append (",")
+							game_state.movements_msg_append (exp.position.col.out)
+							game_state.movements_msg_append (",")
 							from
 								quadrant := 1
 								loop_counter := 1
@@ -160,8 +160,8 @@ feature -- execute
 								end
 								loop_counter := loop_counter + 1
 							end
-							model.movements_msg_append (quadrant.out)
-							model.movements_msg_append ("]")
+							game_state.movements_msg_append (quadrant.out)
+							game_state.movements_msg_append ("]")
 						end
 					end
 				end
