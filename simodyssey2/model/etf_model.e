@@ -19,12 +19,6 @@ create {ETF_MODEL_ACCESS}
 feature {NONE} -- Initialization
 	make
 		do
-			-- player command classes
-			create abort_command.make
-			create play_command.make
-			create status_command.make
-			create test_command.make
-			create turn_commands.make
 			-- game state output
 			game_state := game_state_access.gs
 			-- output
@@ -38,13 +32,6 @@ feature	-- cannot remove reset
 			make
 		end
 
-feature -- player commands classes
-	abort_command: ABORT
-	play_command: PLAY
-	status_command: STATUS
-	test_command: TEST
-	turn_commands: TURN
-
 feature -- game state output
 	game_state: GAME_STATE
 	game_state_access: GAME_STATE_ACCESS
@@ -54,36 +41,35 @@ feature -- player commands -- ************* in each of the execute commands, rem
 
 	abort
 		do
-			abort_command.execute
+			game_state.abort
 			create output.make_empty
 			output.append (game_state.output)
 		end
 
 	play
 		do
-			play_command.execute
+			game_state.play
 			create output.make_empty
 			output.append (game_state.output)
 		end
 
 	status
 		do
-			status_command.execute
+			game_state.status
 			create output.make_empty
 			output.append (game_state.output)
 		end
 
 	test (a_threshold: INTEGER; j_threshold: INTEGER;  m_threshold: INTEGER; b_threshold: INTEGER; p_threshold: INTEGER)
 		do
-			test_command.add_thresholds (a_threshold, j_threshold, m_threshold, b_threshold, p_threshold)
-			test_command.execute
+			game_state.test(a_threshold, j_threshold,  m_threshold, b_threshold, p_threshold)
 			create output.make_empty
 			output.append (game_state.output)
 		end
 
 	turn (action: ACTION)
 		do
-			turn_commands.execute (action)
+			game_state.turn (action)
 			create output.make_empty
 			output.append (game_state.output)
 		end

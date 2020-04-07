@@ -24,6 +24,13 @@ feature -- constructor
 			create deaths_by_asteroid_msg.make_empty
 			create last_msg.make_empty
 
+			-- player command classes
+			create abort_command.make
+			create play_command.make
+			create status_command.make
+			create test_command.make
+			create turn_commands.make
+
 			-- variables used for msgs
 			entities_moved := false
 			entities_died := false
@@ -52,6 +59,13 @@ feature -- constructor
 			output_states
 		end
 
+feature -- player commands classes
+	abort_command: ABORT
+	play_command: PLAY
+	status_command: STATUS
+	test_command: TEST
+	turn_commands: TURN
+
 feature -- model attributes
 	-- variables used for msgs
 	entities_moved: BOOLEAN
@@ -75,6 +89,33 @@ feature -- model attributes
 
 	-- explorer
 	explorer_ent_alpha: ENTITY_ALPHABET
+
+feature -- player commands
+	abort
+		do
+			abort_command.execute
+		end
+
+	play
+		do
+			play_command.execute
+		end
+
+	status
+		do
+			status_command.execute
+		end
+
+	test (a_threshold: INTEGER; j_threshold: INTEGER;  m_threshold: INTEGER; b_threshold: INTEGER; p_threshold: INTEGER)
+		do
+			test_command.add_thresholds (a_threshold, j_threshold, m_threshold, b_threshold, p_threshold)
+			test_command.execute
+		end
+
+	turn (action: ACTION)
+		do
+			turn_commands.execute (action)
+		end
 
 feature -- update states
 		-- Could use: (outside of class)
