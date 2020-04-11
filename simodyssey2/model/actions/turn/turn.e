@@ -174,11 +174,11 @@ feature -- execute
 
 					-- entering this if statement ends the game
 					if game_state.is_gameover then
-						game_state.not_in_game_mode
-						game_state.not_gameover
-						if explorer.is_dead then
+						if explorer.is_dead and game_state.mode.is_equal ("test") then
 							game_state.output_last_message
 						end
+						game_state.not_in_game_mode
+						game_state.not_gameover
 					end
 				end
 
@@ -408,9 +408,9 @@ feature -- behave
 			if attached {ASTEROID_ENT} ent_alpha.entity  as asteroid_ent then
 				across entity_ids.get_entities_at (ent_alpha.entity.position) as possible_void_ent_alpha loop
 					if attached {ENTITY_ALPHABET} possible_void_ent_alpha.item as ent_alp then
-						if attached {FUELED_ENT} ent_alp.entity as fueled_ent then
+						if attached {REPRODUCIBLE_ENT} ent_alp.entity as reproducible_ent then
 							-- entity dies
-							fueled_ent.died
+							reproducible_ent.died
 							game_state.an_entity_died
 							create custom_string.make_empty
 
@@ -440,6 +440,8 @@ feature -- behave
 								explorer_ent.died
 								game_state.an_entity_died
 
+								explorer_ent.change_life (0)
+
 								custom_string.append ("Explorer ")
 								custom_string.append ("got destroyed by asteroid (id: ")
 								custom_string.append (ent_alpha.id.out)
@@ -450,6 +452,9 @@ feature -- behave
 
 								movements_append_deaths (ent_alp, sector)
 								deaths_append_deaths (ent_alp, custom_string)
+
+								game_state.last_msg_append (custom_string)
+								game_state.states_msg_append (game_state.last_message)
 
 								sector.delete (ent_alp)
 
@@ -771,7 +776,7 @@ feature {NONE} -- check_entity
 						variable_deaths_msg.append ("      ")
 						variable_deaths_msg.append ("Explorer got devoured by blackhole (id: -1) at Sector:3:3")
 
-						game_state.last_msg_append ("Explorer got lost in space - out of fuel at Sector:3:3")
+						game_state.last_msg_append ("Explorer got devoured by blackhole (id: -1) at Sector:3:3")
 						game_state.states_msg_append (game_state.last_message)
 
 						-- make it so that the game has to end

@@ -613,4 +613,10 @@ feature -- output_states, output_movements, output_sectors, output_descriptions,
 			Result.append ("The game has ended. You can start a new game.")
 		end
 
+invariant
+	correct_modes: mode.is_equal ("none") or mode.is_equal ("play") or mode.is_equal ("test")
+	correct_ok_or_error: ok_or_error.is_equal ("ok") or ok_or_error.is_equal ("error")
+	non_zero_state: state >= 0
+	non_zero_mini_state: mini_state >= 0
+
 end
