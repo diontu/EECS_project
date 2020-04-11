@@ -1,0 +1,7 @@
+-- Test if explorer dies from asteroid 
+test(10,10,10,10,10)
+abort
+test(10,10,10,10,10)
+move(S)
+move(S)
+move(E)
