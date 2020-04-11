@@ -1,0 +1,32 @@
+-- Test if the explorer regains fuel after passing while on yellow dwarf
+-- Test if explorer can land and liftoff
+
+test(3,5,7,15,30)
+move(S)
+move(S)
+move(N)
+move(E)
+move(SW)
+pass
+abort
+test(3,5,7,15,30)
+move(S)
+move(S)
+wormhole
+move(E)
+move(N)
+move(NE)
+land
+liftoff
+move(N)
+land
+land
+liftoff
+move(E)
+land
+move(S)
+liftoff
+move(W)
+land
+abort
+

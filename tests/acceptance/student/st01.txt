@@ -1,5 +1,0 @@
-test(3,5,7,15,30)
-abort
-test(3,5,7,15,30)
-pass
-move(E)

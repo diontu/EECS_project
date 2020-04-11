@@ -1,0 +1,9 @@
+-- Tests if explorer dies from black hole
+-- Test if player can use wormhole
+play
+move(SE)
+move(SE)
+play
+wormhole
+wormhole 
+abort

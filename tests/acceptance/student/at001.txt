@@ -1,0 +1,15 @@
+-- Tests if explorer can go into a full sector
+-- Tests if can play again after death
+test(3,5,7,15,30)
+abort
+test(3,5,7,15,30)
+pass
+move(E)
+wormhole
+move(E)
+move(N)
+move(N)
+play
+abort
+
+

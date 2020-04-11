@@ -1,0 +1,14 @@
+-- Tests play
+-- Test land
+-- Test explorer dying from running out of fuel
+play
+move(S)
+move(S)
+move(S)
+wormhole
+move(NE)
+land
+move(N)
+move(N)
+move(N)
+
