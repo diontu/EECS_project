@@ -1,7 +1,7 @@
 -- Tests if explorer can go into a full sector
--- Tests if explorer can use wormhole
--- Tests death by blackhole
 -- Tests if can play again after death
+test(3,5,7,15,30)
+abort
 test(3,5,7,15,30)
 pass
 move(E)
@@ -9,11 +9,7 @@ wormhole
 move(E)
 move(N)
 move(N)
-move(N)
-move(N)
-move(SE)
-land
-liftoff
-move(S)
 play
 abort
+
+
